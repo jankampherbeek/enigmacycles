@@ -5,6 +5,7 @@
  */
 package com.radixpro.enigma.charts
 
+import com.radixpro.enigma.cycles.di.Injector
 import javafx.application.Application
 import javafx.stage.Stage
 
@@ -19,9 +20,7 @@ class StartEnigma: Application() {
     }
 
     override fun start(primaryStage: Stage) {
-//        Injector.injectScreenStart().show()
-        println("Started...")
-
+        Injector.injectScreenInput().show()
     }
 
 }
