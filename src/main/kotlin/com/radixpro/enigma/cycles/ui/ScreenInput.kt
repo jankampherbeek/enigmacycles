@@ -9,6 +9,7 @@ package com.radixpro.enigma.cycles.ui
 import com.radixpro.enigma.cycles.core.UiAyanamsha
 import com.radixpro.enigma.cycles.core.UiCelPoints
 import com.radixpro.enigma.cycles.helpers.DateValidator
+import com.radixpro.enigma.cycles.helpers.Help
 import com.radixpro.enigma.cycles.helpers.InfoLabelBuilder
 import com.radixpro.enigma.cycles.ui.UiDictionary.GAP
 import com.radixpro.enigma.cycles.ui.UiDictionary.INPUT_DEFAULT_STYLE
@@ -21,6 +22,7 @@ import com.radixpro.enigma.cycles.ui.UiDictionary.STYLE_TITLE_TEXT
 import com.radixpro.enigma.cycles.ui.UiDictionary.SUBTITLE_HEIGHT
 import com.radixpro.enigma.cycles.ui.UiDictionary.TITLE_HEIGHT
 import com.radixpro.enigma.libfe.fxbuilders.*
+import com.radixpro.enigma.libfe.texts.Rosetta
 import com.radixpro.enigma.libfe.texts.Rosetta.getText
 import javafx.application.Platform
 import javafx.beans.value.ObservableValue
@@ -437,7 +439,10 @@ class ScreenInput(private val dateValidator: DateValidator) {
     }
 
     private fun onHelp() {
-        println("Show help....")
+        Help(
+            Rosetta.getHelpText("help.screeninput.title"),
+            Rosetta.getHelpText("help.screeninput.content")
+        ).showContent()
     }
 
     private fun onCalculate() {
