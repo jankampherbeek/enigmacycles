@@ -9,6 +9,7 @@ package com.radixpro.enigma.cycles.ui
 import com.radixpro.enigma.cycles.core.UiAyanamsha
 import com.radixpro.enigma.cycles.core.UiCelPoints
 import com.radixpro.enigma.cycles.helpers.DateValidator
+import com.radixpro.enigma.cycles.helpers.InfoLabelBuilder
 import com.radixpro.enigma.cycles.ui.UiDictionary.GAP
 import com.radixpro.enigma.cycles.ui.UiDictionary.INPUT_DEFAULT_STYLE
 import com.radixpro.enigma.cycles.ui.UiDictionary.INPUT_ERROR_STYLE
@@ -35,10 +36,12 @@ import javafx.scene.control.*
 import org.controlsfx.control.CheckComboBox
 
 
-class ScreenInput(val dateValidator: DateValidator) {
+class ScreenInput(private val dateValidator: DateValidator) {
 
-    private val height = 600.0
+    private val height = 800.0
     private val width = 800.0
+    private val halfwidth = 390.0
+    private val spaceheight = 18.0
     private val allCelPoints = mutableListOf<UiCelPoints>()
     private val allCelPointNames = mutableListOf<String>()
     private val allAyanamshas = mutableListOf<UiAyanamsha>()
@@ -131,6 +134,8 @@ class ScreenInput(val dateValidator: DateValidator) {
             .build()
         grid.add(defineTitlePane(),0, 0, 1, 1)
         grid.add(defineScrollPane(), 0, 1, 1, 1)
+        grid.add(PaneBuilder().setPrefHeight(spaceheight * 2).build(), 0, 2, 1, 1)
+        grid.add(buttonBar, 0, 3, 1, 1)
         return grid
     }
 
@@ -164,6 +169,8 @@ class ScreenInput(val dateValidator: DateValidator) {
 
     private fun defineScrollPane(): ScrollPane {
         val scrollPane = ScrollPane()
+        scrollPane.prefHeight=height - 120.0
+        scrollPane.prefViewportHeight = height - 140.0
         scrollPane.content = defineInnerGridPane()
         return scrollPane
     }
@@ -172,46 +179,67 @@ class ScreenInput(val dateValidator: DateValidator) {
         val innerGrid = GridPaneBuilder()
             .setHGap(GAP)
             .setPrefWidth(width - 20.0)
-            .setPrefHeight(height - 70.0)
             .setPadding(Insets(GAP))
             .setStyleSheet(STYLESHEET)
             .build()
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblcycletype")).build(), 0, 0, 1, 1)
-        innerGrid.add(rbCycleTypeSinglePoints, 1, 0, 1, 1)
-        innerGrid.add(rbCycleTypeSumOfPoints, 2, 0, 1, 1)
-        innerGrid.add(lblCelPoints, 0, 1, 1, 1)
-        innerGrid.add(ccbCelPoints, 0, 2, 1, 1)
-        innerGrid.add(lblCelPointsAdd, 0, 3, 1, 1)
-        innerGrid.add(lblCelPointsSubtract, 1, 3, 2, 1)
-        innerGrid.add(ccbCelPointsAdd, 0, 4, 1, 1)
-        innerGrid.add(ccbCelPointSubtract, 1, 4, 2, 1)
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblzodiac")).build(), 0, 5, 1, 1)
-        innerGrid.add(rbZodiacTropical, 1, 5, 1, 1)
-        innerGrid.add(rbZodiacSidereal, 2, 5, 1, 1)
-        innerGrid.add(lblAyanamsha, 0, 6, 1, 1)
-        innerGrid.add(cbAyanamsha, 0, 7, 1, 1)
-        innerGrid.add(lblObserverPos, 0, 8, 1, 1)
-        innerGrid.add(rbObserverPosGeocentric, 1, 8, 1, 1)
-        innerGrid.add(rbObserverPosHeliocentric, 2, 8, 1, 1)
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblcoordinate")).build(), 0, 9, 1, 1)
-        innerGrid.add(rbCoordinateLon, 1, 9, 1, 1)
-        innerGrid.add(rbCoordinateLat, 2, 9, 1, 1)
-        innerGrid.add(rbCoordinateRa, 1, 10, 1, 1)
-        innerGrid.add(rbCoordinateDecl, 2, 10, 1, 1)
-        innerGrid.add(PaneBuilder().setPrefHeight(12.0).build(), 0, 11, 3, 1)
-        innerGrid.add(defineSubTitlePane(getText("screeninput.subtitleperiod")), 0, 12, 3, 1)
-        innerGrid.add(PaneBuilder().setPrefHeight(6.0).build(), 0, 13, 3, 1)
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblstartdate")).build(), 0, 14, 1, 1)
-        innerGrid.add(tfStartDate, 0, 15, 1, 1)
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblenddate")).build(), 0, 16, 1, 1)
-        innerGrid.add(tfEndDate, 0, 17, 1, 1)
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblcalendar")).build(), 0, 18, 1, 1)
-        innerGrid.add(rbCalendarGreg, 1, 18, 1, 1)
-        innerGrid.add(rbCalendarJul, 2, 18, 1, 1)
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblinterval")).build(), 0, 19, 1, 1)
-        innerGrid.add(tfInterval, 0, 20, 1, 1)
-        innerGrid.add(PaneBuilder().setPrefHeight(18.0).build(), 0, 21, 3, 1)
-        innerGrid.add(buttonBar, 0, 22, 3, 1)
+        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblcycletype")).build(), 0, 0, 2, 1)
+        innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infocycletype")).setPrefWidth(halfwidth)
+            .setMaxWidth(halfwidth).build(), 2, 0, 1, 2)
+        innerGrid.add(rbCycleTypeSinglePoints, 0, 1, 1, 1)
+        innerGrid.add(rbCycleTypeSumOfPoints, 1, 1, 1, 1)
+        innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 2, 3, 1)
+        innerGrid.add(lblCelPoints, 0, 3, 2, 1)
+        innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infocelpoints")).setPrefWidth(halfwidth)
+            .setMaxWidth(halfwidth).build(), 2, 3, 1, 2)
+        innerGrid.add(ccbCelPoints, 0, 4, 2, 1)
+        innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 5, 3, 1)
+        innerGrid.add(lblCelPointsAdd, 0, 6, 2, 1)
+        innerGrid.add(ccbCelPointsAdd, 0, 7, 2, 1)
+        innerGrid.add(lblCelPointsSubtract, 0, 8, 2, 1)
+        innerGrid.add(ccbCelPointSubtract, 0, 9, 2, 1)
+        innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infocelpointaddsubtract")).setPrefWidth(halfwidth)
+            .setMaxWidth(halfwidth).build(), 2, 6, 1, 4)
+        innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 11, 3, 1)
+        innerGrid.add(defineSubTitlePane(getText("screeninput.subtitleastronpos")), 0, 12, 3, 1)
+        innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 13, 3, 1)
+        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblzodiac")).build(), 0, 14, 2, 1)
+        innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infozodiac")).setPrefWidth(halfwidth)
+            .setMaxWidth(halfwidth).build(), 2, 14, 1, 3)
+        innerGrid.add(rbZodiacTropical, 0, 15, 1, 1)
+        innerGrid.add(rbZodiacSidereal, 1, 15, 1, 1)
+        innerGrid.add(lblAyanamsha, 0, 16, 2, 1)
+        innerGrid.add(cbAyanamsha, 0, 17, 2, 1)
+        innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 18, 3, 1)
+        innerGrid.add(lblObserverPos, 0, 19, 1, 1)
+        innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infoobserverpos")).setPrefWidth(halfwidth)
+            .setMaxWidth(halfwidth).build(), 2, 19, 1, 2)
+        innerGrid.add(rbObserverPosGeocentric, 0, 20, 1, 1)
+        innerGrid.add(rbObserverPosHeliocentric, 1, 20, 1, 1)
+        innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 21, 3, 1)
+        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblcoordinate")).build(), 0, 22, 2, 1)
+        innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infocoordinates")).setPrefWidth(halfwidth)
+            .setMaxWidth(halfwidth).build(), 2, 22, 1, 3)
+        innerGrid.add(rbCoordinateLon, 0, 23, 1, 1)
+        innerGrid.add(rbCoordinateLat, 1, 23, 1, 1)
+        innerGrid.add(rbCoordinateRa, 0, 24, 1, 1)
+        innerGrid.add(rbCoordinateDecl, 1, 24, 1, 1)
+        innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 25, 3, 1)
+        innerGrid.add(defineSubTitlePane(getText("screeninput.subtitleperiod")), 0, 26, 3, 1)
+        innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 27, 3, 1)
+        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblstartdate")).build(), 0, 28, 2, 1)
+        innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infoperiod")).setPrefWidth(halfwidth)
+            .setMaxWidth(halfwidth).build(), 2, 28, 1, 5)
+        innerGrid.add(tfStartDate, 0, 29, 2, 1)
+        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblenddate")).build(), 0, 30, 2, 1)
+        innerGrid.add(tfEndDate, 0, 31, 2, 1)
+        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblcalendar")).build(), 0, 32, 2, 1)
+        innerGrid.add(rbCalendarGreg, 0, 33, 1, 1)
+        innerGrid.add(rbCalendarJul, 1, 33, 1, 1)
+        innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 34, 3, 1)
+        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblinterval")).build(), 0, 35, 2, 1)
+        innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infointerval")).setPrefWidth(halfwidth)
+            .setMaxWidth(halfwidth).build(), 2, 35, 1, 2)
+        innerGrid.add(tfInterval, 0, 36, 1, 1)
         return innerGrid
     }
 
@@ -334,6 +362,9 @@ class ScreenInput(val dateValidator: DateValidator) {
         statusComplete = defineStatusComplete()
         btnCalculate.isDisable = !statusComplete
         btnCalculate.isFocusTraversable = statusComplete
+
+
+        // TODO check for Ayanamsha
     }
 
     private fun disEnableCycleType(typeSingle: Boolean) {
