@@ -13,22 +13,14 @@ enum class Center(val rbKey: String) {
     HELIOCENTRIC("enum.center.heliocentric")
 }
 
-enum class CoordinateSystem(val rbKey: String) {
-    ECLIPTIC("enum.coordinatesystems.ecliptic"),
-    EQUATORIAL("enum.coordinatesystems.equatorial")
-}
-
 enum class CycleType(val rbKey: String) {
     SINGLE_POINT("enum.cycletype.singlepoint"),
     SUM_OF_POINTS("enum.cycletype.sumofpoints")
 }
 
-enum class EclipticCoordinates(val rbKey: String) {
+enum class CycleCoordinateTypes(val rbKey: String) {
     LONGITUDE("enum.eclipticcoordinates.longitude"),
-    LATITUDE("enum.eclipticcoordinates.latitude")
-}
-
-enum class EquatorialCoordinates(val rbKey: String) {
+    LATITUDE("enum.eclipticcoordinates.latitude"),
     RIGHT_ASCENSION("enum.equatorialcoordinates.ra"),
     DECLINATION("enum.equatorialcoordinates.declination")
 }

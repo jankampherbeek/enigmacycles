@@ -6,8 +6,7 @@
 
 package com.radixpro.enigma.cycles.ui
 
-import com.radixpro.enigma.cycles.core.UiAyanamsha
-import com.radixpro.enigma.cycles.core.UiCelPoints
+import com.radixpro.enigma.cycles.core.*
 import com.radixpro.enigma.cycles.helpers.DateValidator
 import com.radixpro.enigma.cycles.helpers.Help
 import com.radixpro.enigma.cycles.helpers.InfoLabelBuilder
@@ -36,6 +35,7 @@ import javafx.stage.Stage
 import java.util.*
 import javafx.scene.control.*
 import org.controlsfx.control.CheckComboBox
+import java.lang.Integer.max
 
 
 class ScreenInput(private val dateValidator: DateValidator) {
@@ -446,7 +446,39 @@ class ScreenInput(private val dateValidator: DateValidator) {
     }
 
     private fun onCalculate() {
+        val cycleSettings = defineCycleSettings()
         println("Perform calculation...")
+    }
+
+    private fun defineCycleSettings(): CycleSettings {
+        val cycleCoordinateType = when(tgCoordinate.selectedToggle) {
+            rbCoordinateLon  -> CycleCoordinateTypes.LONGITUDE
+            rbCoordinateLat -> CycleCoordinateTypes.LATITUDE
+            rbCoordinateRa -> CycleCoordinateTypes.RIGHT_ASCENSION
+            else -> CycleCoordinateTypes.DECLINATION
+        }
+        val zodiac = when(tgZodiac.selectedToggle) {
+            rbZodiacTropical -> Zodiac.TROPICAL
+            else -> Zodiac.SIDEREAL
+        }
+        val ayanamshaIndex = max(1, cbAyanamsha.selectionModel.selectedIndex)   // use Fagan ayanamsha if none is defined, for tropical this will be ignored
+        val ayanamsha = allAyanamshas[ayanamshaIndex]
+        val cycleCoordinates = CycleCoordinates(cycleCoordinateType, zodiac, ayanamsha)
+        val cyclePeriod = CyclePeriod(tfStartDate.text, tfEndDate.text, tfInterval.text.toDouble())
+        val center = when(tgObserverPos.selectedToggle) {
+            rbObserverPosGeocentric -> Center.GEOCENTRIC
+            else -> Center.HELIOCENTRIC
+        }
+        val cycleType = when(tgCycleType.selectedToggle) {
+            rbCycleTypeSinglePoints -> CycleType.SINGLE_POINT
+            else -> CycleType.SUM_OF_POINTS
+        }
+        val celPoints = mutableListOf<UiCelPoints>()
+        for (cpIndex in ccbCelPoints.checkModel.checkedIndices) celPoints.add(allCelPoints[cpIndex])
+        val summableCelPoints = mutableListOf<SummableCelPoint>()
+        for (cpIndex in ccbCelPointsAdd.checkModel.checkedIndices) summableCelPoints.add(SummableCelPoint(allCelPoints[cpIndex], true))
+        for (cpIndex in ccbCelPointSubtract.checkModel.checkedIndices) summableCelPoints.add(SummableCelPoint(allCelPoints[cpIndex], false))
+        return CycleSettings(cycleCoordinates, center, cycleType, celPoints, summableCelPoints, cyclePeriod)
     }
 
 }

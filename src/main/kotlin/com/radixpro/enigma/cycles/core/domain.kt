@@ -8,13 +8,11 @@ package com.radixpro.enigma.cycles.core
 
 data class SummableCelPoint(val celPoint: UiCelPoints, val positive: Boolean)
 
-data class CycleCoordinates(val coordinateSystem: CoordinateSystem,
-                            val eclipticCoordinates: EclipticCoordinates,
-                            val equatorialCoordinates: EquatorialCoordinates,
+data class CycleCoordinates(val cycleCoordinateType: CycleCoordinateTypes,
                             val zodiac: Zodiac,
                             val ayanamsha: UiAyanamsha)
 
-data class CyclePeriod(val startDateTxt: String, val endDateTxt: String, val interval: Int)
+data class CyclePeriod(val startDateTxt: String, val endDateTxt: String, val interval: Double)
 
 data class CycleSettings(val cycleCoordinates: CycleCoordinates,
                          val center: Center,
