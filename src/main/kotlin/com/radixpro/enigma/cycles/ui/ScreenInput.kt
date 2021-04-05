@@ -54,7 +54,7 @@ class ScreenInput(private val dateValidator: DateValidator) {
     private lateinit var txtTitle: String
 
     private lateinit var btnCalculate: Button
-    private lateinit var btnExit: Button
+    private lateinit var btnClose: Button
     private lateinit var btnHelp: Button
     private lateinit var buttonBar: ButtonBar
     private lateinit var cbAyanamsha: ComboBox<String>
@@ -333,10 +333,10 @@ class ScreenInput(private val dateValidator: DateValidator) {
 
     private fun defineButtonBar() {
         btnHelp = ButtonBuilder().setText(getText("shared.btnhelp")).build()
-        btnExit = ButtonBuilder().setText(getText("shared.btnexit")).build()
+        btnClose = ButtonBuilder().setText(getText("shared.btn_close")).build()
         btnCalculate = ButtonBuilder().setText(getText("screeninput.btncalculate")).setDisabled(true)
             .setFocusTraversable(false).build()
-        buttonBar = ButtonBarBuilder().setButtons(arrayListOf(btnCalculate, btnHelp, btnExit)).build()
+        buttonBar = ButtonBarBuilder().setButtons(arrayListOf(btnCalculate, btnHelp, btnClose)).build()
     }
 
     private fun defineListeners() {
@@ -350,7 +350,7 @@ class ScreenInput(private val dateValidator: DateValidator) {
         tfEndDate.textProperty().addListener { _, _, _ -> checkStatus() }
         tfInterval.textProperty().addListener { _, _, _ -> checkStatus() }
 
-        btnExit.onAction = EventHandler { Platform.exit()}
+        btnClose.onAction = EventHandler { stage.close() }
         btnHelp.onAction = EventHandler { onHelp() }
         btnCalculate.onAction = EventHandler { onCalculate() }
     }
@@ -364,9 +364,6 @@ class ScreenInput(private val dateValidator: DateValidator) {
         statusComplete = defineStatusComplete()
         btnCalculate.isDisable = !statusComplete
         btnCalculate.isFocusTraversable = statusComplete
-
-
-        // TODO check for Ayanamsha
     }
 
     private fun disEnableCycleType(typeSingle: Boolean) {

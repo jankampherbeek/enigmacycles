@@ -20,7 +20,7 @@ class StartEnigma: Application() {
     }
 
     override fun start(primaryStage: Stage) {
-        Injector.injectScreenInput().show()
+        Injector.injectScreenStart().show()
     }
 
 }
