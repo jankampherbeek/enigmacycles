@@ -40,6 +40,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>com.radixpro.enigma</groupId>
             <artifactId>libbe</artifactId>
@@ -54,6 +55,11 @@
             <groupId>de.th-mack</groupId>
             <artifactId>seport</artifactId>
             <version>${mack.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -147,6 +153,11 @@
             <artifactId>junit-jupiter</artifactId>
             <version>RELEASE</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>11.0.2</version>
         </dependency>
     </dependencies>
 
