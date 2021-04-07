@@ -23,7 +23,6 @@ import com.radixpro.enigma.cycles.ui.UiDictionary.TITLE_HEIGHT
 import com.radixpro.enigma.libfe.fxbuilders.*
 import com.radixpro.enigma.libfe.texts.Rosetta
 import com.radixpro.enigma.libfe.texts.Rosetta.getText
-import javafx.application.Platform
 import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler
 import javafx.geometry.Insets
@@ -447,7 +446,7 @@ class ScreenInput(private val dateValidator: DateValidator) {
         println("Perform calculation...")
     }
 
-    private fun defineCycleSettings(): CycleSettings {
+    private fun defineCycleSettings(): CycleDefinition {
         val cycleCoordinateType = when(tgCoordinate.selectedToggle) {
             rbCoordinateLon  -> CycleCoordinateTypes.LONGITUDE
             rbCoordinateLat -> CycleCoordinateTypes.LATITUDE
@@ -461,7 +460,7 @@ class ScreenInput(private val dateValidator: DateValidator) {
         val ayanamshaIndex = max(1, cbAyanamsha.selectionModel.selectedIndex)   // use Fagan ayanamsha if none is defined, for tropical this will be ignored
         val ayanamsha = allAyanamshas[ayanamshaIndex]
         val cycleCoordinates = CycleCoordinates(cycleCoordinateType, zodiac, ayanamsha)
-        val cyclePeriod = CyclePeriod(tfStartDate.text, tfEndDate.text, tfInterval.text.toDouble())
+        val cyclePeriod = CyclePeriod(tfStartDate.text, tfEndDate.text, tfInterval.text.toDouble(), true)
         val center = when(tgObserverPos.selectedToggle) {
             rbObserverPosGeocentric -> Center.GEOCENTRIC
             else -> Center.HELIOCENTRIC
@@ -475,7 +474,7 @@ class ScreenInput(private val dateValidator: DateValidator) {
         val summableCelPoints = mutableListOf<SummableCelPoint>()
         for (cpIndex in ccbCelPointsAdd.checkModel.checkedIndices) summableCelPoints.add(SummableCelPoint(allCelPoints[cpIndex], true))
         for (cpIndex in ccbCelPointSubtract.checkModel.checkedIndices) summableCelPoints.add(SummableCelPoint(allCelPoints[cpIndex], false))
-        return CycleSettings(cycleCoordinates, center, cycleType, celPoints, summableCelPoints, cyclePeriod)
+        return CycleDefinition(cycleCoordinates, center, cycleType, celPoints, summableCelPoints, cyclePeriod)
     }
 
 }

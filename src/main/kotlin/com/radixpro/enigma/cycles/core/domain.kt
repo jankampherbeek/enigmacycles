@@ -6,17 +6,24 @@
 
 package com.radixpro.enigma.cycles.core
 
+import javafx.scene.chart.XYChart
+
 data class SummableCelPoint(val celPoint: UiCelPoints, val positive: Boolean)
 
 data class CycleCoordinates(val cycleCoordinateType: CycleCoordinateTypes,
                             val zodiac: Zodiac,
                             val ayanamsha: UiAyanamsha)
 
-data class CyclePeriod(val startDateTxt: String, val endDateTxt: String, val interval: Double)
+data class CyclePeriod(val startDateTxt: String, val endDateTxt: String, val interval: Double, val gregorian: Boolean)
 
-data class CycleSettings(val cycleCoordinates: CycleCoordinates,
-                         val center: Center,
-                         val cycleType: CycleType,
-                         val celPoints: List<UiCelPoints>,
-                         val summableCelPoint: List<SummableCelPoint>,
-                         val CyclePeriod: CyclePeriod)
+data class CycleDefinition(val cycleCoordinates: CycleCoordinates,
+                           val center: Center,
+                           val cycleType: CycleType,
+                           val celPoints: List<UiCelPoints>,
+                           val summableCelPoint: List<SummableCelPoint>,
+                           val cyclePeriod: CyclePeriod)
+
+data class PointTimeSeries(val point: UiCelPoints, val results: List<XYChart.Series<Number, Number>>)
+
+data class TimeSeriesChartData(val definition: CycleDefinition, val series: List<PointTimeSeries>)
+

@@ -168,9 +168,9 @@ fun show() {
     }
 
     private fun onCycles() {
-//        screenInput.show()
-        val testGraphics = TestGraphics()
-        testGraphics.testIt()
+        screenInput.show()
+//        val testGraphics = TestGraphics()
+//        testGraphics.testIt()
     }
 
     private fun onAbout() {

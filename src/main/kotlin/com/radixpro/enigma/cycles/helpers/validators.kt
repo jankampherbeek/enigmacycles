@@ -6,30 +6,19 @@
 
 package com.radixpro.enigma.cycles.helpers
 
-import com.radixpro.enigma.cycles.ui.UiDictionary.DATE_SEPARATOR
 import com.radixpro.enigma.libbe.api.AstronApi
 import com.radixpro.enigma.libbe.api.ValidDateRequest
 
-class DateValidator(private val api: AstronApi) {
+class DateValidator(private val api: AstronApi, private val converter: DateTimeConverter) {
 
     fun checkDate(inputText: String, greg: Boolean): Boolean {
-        var validated = false
-        val day: Int
-        val month: Int
-        val year: Int
-        val values = inputText.split(DATE_SEPARATOR)
-        if (values.size == 3) {
-            try {
-                year = values[0].toInt()
-                month = values[1].toInt()
-                day = values[2].toInt()
-                val request = ValidDateRequest(year, month, day, greg)
-                validated = api.isValidDate(request)
-            } catch (nfe: NumberFormatException) {
-                validated = false
-            }
+        return try {
+            val values = converter.dateElements(inputText)
+            val request = ValidDateRequest(values[0], values[1], values[2], greg)
+            api.isValidDate(request)
+        } catch (e: Exception) {
+            false
         }
-        return validated
     }
 
 }

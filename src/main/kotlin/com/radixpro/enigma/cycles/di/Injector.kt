@@ -6,8 +6,10 @@
 
 package com.radixpro.enigma.cycles.di
 
+import com.radixpro.enigma.cycles.helpers.DateTimeConverter
 import com.radixpro.enigma.cycles.helpers.DateValidator
 import com.radixpro.enigma.cycles.helpers.LanguageManager
+import com.radixpro.enigma.cycles.process.CycleRequestProcessor
 import com.radixpro.enigma.cycles.ui.ScreenAbout
 import com.radixpro.enigma.cycles.ui.ScreenInput
 import com.radixpro.enigma.cycles.ui.ScreenManual
@@ -16,8 +18,16 @@ import com.radixpro.enigma.libbe.api.AstronApi
 
 object Injector {
 
-    private fun injectDateValidator(): DateValidator {
-        return DateValidator(AstronApi())
+    fun injectCycleRequestProcessor(): CycleRequestProcessor {
+        return CycleRequestProcessor(AstronApi(), injectDateTimeConverter())
+    }
+
+    private fun injectDateTimeConverter(): DateTimeConverter {
+        return DateTimeConverter()
+    }
+
+    fun injectDateValidator(): DateValidator {
+        return DateValidator(AstronApi(), injectDateTimeConverter())
     }
 
     private fun injectLanguageManger(): LanguageManager {

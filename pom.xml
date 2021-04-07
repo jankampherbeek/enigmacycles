@@ -29,7 +29,7 @@
         <javafx.version>14.0.1</javafx.version>
         <junit.version>4.12</junit.version>
         <kotlin.version>1.4.32</kotlin.version>
-        <libbe.version>0.3.1</libbe.version>
+        <libbe.version>0.3.2</libbe.version>
         <libfe.version>0.1</libfe.version>
         <mack.version>2.01.00-02</mack.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
