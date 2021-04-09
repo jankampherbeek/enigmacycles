@@ -6,10 +6,7 @@
 
 package com.radixpro.enigma.cycles.process
 
-import com.radixpro.enigma.cycles.core.CycleCoordinateTypes
-import com.radixpro.enigma.cycles.core.CycleDefinition
-import com.radixpro.enigma.cycles.core.PointTimeSeries
-import com.radixpro.enigma.cycles.core.TimeSeriesChartData
+import com.radixpro.enigma.cycles.core.*
 import com.radixpro.enigma.cycles.exceptions.DateException
 import com.radixpro.enigma.cycles.helpers.DateTimeConverter
 import com.radixpro.enigma.libbe.api.AstronApi
@@ -18,9 +15,31 @@ import com.radixpro.enigma.libbe.api.TimeSeriesRequest
 import com.radixpro.enigma.libbe.domain.*
 import java.sql.Time
 
-class CycleRequestProcessor(private val astronApi: AstronApi, private val dateTimeConverter: DateTimeConverter) {
+class CycleRequestProcessor(private val calculator: CycleRequestCalculator) {
 
-    fun processCycleRequest(definition: CycleDefinition): List<TimeSeriesValues> {
+    fun processCycleRequest(definition: CycleDefinition) {
+        val calculatedTimeSeries = calculator.calculateCycleRequest(definition)
+        if (definition.cycleType == CycleType.SINGLE_POINT) {
+
+        } else if (definition.cycleType == CycleType.SUM_OF_POINTS) {
+
+        }
+
+    }
+
+
+}
+
+
+
+
+
+/**
+ * Calculates positions as a TimeSeries for several types of cycles.
+ */
+class CycleRequestCalculator(private val astronApi: AstronApi, private val dateTimeConverter: DateTimeConverter) {
+
+    fun calculateCycleRequest(definition: CycleDefinition): List<TimeSeriesValues> {
         val request = createRequest(definition)
         val response = astronApi.calcTimeSeries(request)
         if (response.errors) {

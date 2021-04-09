@@ -23,7 +23,16 @@ data class CycleDefinition(val cycleCoordinates: CycleCoordinates,
                            val summableCelPoint: List<SummableCelPoint>,
                            val cyclePeriod: CyclePeriod)
 
-data class PointTimeSeries(val point: UiCelPoints, val results: List<XYChart.Series<Number, Number>>)
+data class PresentableTSValues(val point: UiCelPoints, val positions: List<Double>)
 
-data class TimeSeriesChartData(val definition: CycleDefinition, val series: List<PointTimeSeries>)
+data class PresentableCycleResult(val definition: CycleDefinition,
+                                  val jdNrs: List<Double>,
+                                  val dateTexts: List<String>,
+                                  val presValues: List<PresentableTSValues>)
+
+
+
+//data class PointTimeSeries(val point: UiCelPoints, val results: List<XYChart.Series<Number, Number>>)
+//
+//data class TimeSeriesChartData(val definition: CycleDefinition, val series: List<PointTimeSeries>)
 

@@ -11,8 +11,6 @@ import io.kotest.matchers.ints.shouldBeExactly
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
 internal class DateTimeConverterTest {
 
     private val converter = DateTimeConverter()

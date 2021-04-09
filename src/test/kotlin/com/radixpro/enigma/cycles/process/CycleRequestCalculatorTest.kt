@@ -13,16 +13,14 @@ import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
-internal class CycleRequestProcessorTest {
+internal class CycleRequestCalculatorTest {
 
     private val margin = 0.00000001
-    private val processor = Injector.injectCycleRequestProcessor()
+    private val processor = Injector.injectCycleRequestCalculator()
 
     @Test
     fun `Processing geocentric tropical singlePoint cycles in longitude should give correct results`() {
-        val response = processor.processCycleRequest(createDefinition())
+        val response = processor.calculateCycleRequest(createDefinition())
         response.size shouldBeExactly 2
         response[0].timePositions.size shouldBeExactly 10
 
