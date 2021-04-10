@@ -3,7 +3,7 @@
  * Enigma Charts is open source.
  * Please check the file copyright.txt in the root of the source for further details
  */
-package com.radixpro.enigma.charts
+package com.radixpro.enigma.cycles
 
 object AppLauncher {
     @JvmStatic

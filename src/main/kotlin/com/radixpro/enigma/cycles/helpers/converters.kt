@@ -6,10 +6,7 @@
 
 package com.radixpro.enigma.cycles.helpers
 
-import com.radixpro.enigma.cycles.core.CycleDefinition
-import com.radixpro.enigma.cycles.core.PresentableCycleResult
-import com.radixpro.enigma.cycles.core.PresentableTSValues
-import com.radixpro.enigma.cycles.core.UiCelPoints
+import com.radixpro.enigma.cycles.core.*
 import com.radixpro.enigma.cycles.exceptions.DateException
 import com.radixpro.enigma.cycles.ui.UiDictionary.DATE_SEPARATOR
 import com.radixpro.enigma.libbe.api.AstronApi
@@ -40,11 +37,20 @@ class DateTimeConverter {
 
 class CycleResultConverter(private val astronApi: AstronApi) {
 
-    fun responseToPresResult(definition: CycleDefinition, values: List<TimeSeriesValues>): PresentableCycleResult {
+    fun responseSingleToPresResult(definition: CycleDefinition,
+                                   values: List<TimeSeriesValues>): PresentableSingleCycleResult {
         val jdNrs = createJdNrs(values[0])
         val dateTxts = createDateTxts(jdNrs, definition.cyclePeriod.gregorian)
-        val presValues = createPresValues(values)
-        return PresentableCycleResult(definition, jdNrs, dateTxts, presValues)
+        val presValues = createSinglePresValues(values)
+        return PresentableSingleCycleResult(definition, jdNrs, dateTxts, presValues)
+    }
+
+    fun responseSummedToPresResult(definition: CycleDefinition,
+                                   values: List<TimeSeriesValues>): PresentableSummedCycleResult {
+        val jdNrs = createJdNrs(values[0])
+        val dateTxts = createDateTxts(jdNrs, definition.cyclePeriod.gregorian)
+        val presSummedValues = createSummedPresValues(definition, values)
+        return PresentableSummedCycleResult(definition, jdNrs, dateTxts, presSummedValues[0], presSummedValues[1])
     }
 
     private fun createJdNrs(tsValues: TimeSeriesValues): List<Double> {
@@ -53,7 +59,18 @@ class CycleResultConverter(private val astronApi: AstronApi) {
         return jdNrs
     }
 
-    private fun createPresValues(allTsValues: List<TimeSeriesValues>): List<PresentableTSValues> {
+    private fun createDateTxts(jdNrs: List<Double>, gregorian: Boolean): List<String> {
+        val dateTxts = mutableListOf<String>()
+        for (jdNr in jdNrs) {
+            val request = DateTimeTxtRequest(jdNr, gregorian)
+            val response = astronApi.constructDateTimeFromJd(request)
+            if (!response.errors) dateTxts.add(response.result)
+            else dateTxts.add("error!")
+        }
+        return dateTxts
+    }
+
+    private fun createSinglePresValues(allTsValues: List<TimeSeriesValues>): List<PresentableTSValues> {
         val presentableTSValues = mutableListOf<PresentableTSValues>()
         val nrOfPoints = allTsValues.size
         for (i in 0 until nrOfPoints) {
@@ -66,15 +83,32 @@ class CycleResultConverter(private val astronApi: AstronApi) {
         return presentableTSValues
     }
 
-    private fun createDateTxts(jdNrs: List<Double>, gregorian: Boolean): List<String> {
-        val dateTxts = mutableListOf<String>()
-        for (jdNr in jdNrs) {
-            val request = DateTimeTxtRequest(jdNr, gregorian)
-            val response = astronApi.constructDateTimeFromJd(request)
-            if (!response.errors) dateTxts.add(response.result)
-            else dateTxts.add("error!")
+    private fun createSummedPresValues(definition: CycleDefinition,
+                                       allTsValues: List<TimeSeriesValues>): List<List<PresentableTSValues>> {
+        val presentableAddValues = mutableListOf<PresentableTSValues>()
+        val prentableSubtractValues = mutableListOf<PresentableTSValues>()
+        val nrOfPoints = allTsValues.size
+        var summCPIds = mutableListOf<Int>()
+        for (i in 0 until definition.summableCelPoint.size) {
+            summCPIds.add(definition.summableCelPoint[i].celPoint.seId)
         }
-        return dateTxts
+        for (i in 0 until nrOfPoints) {
+            val positionsForPoint = mutableListOf<Double>()
+            val listForPoint = allTsValues[i]
+            for (value in listForPoint.timePositions) positionsForPoint.add(value.second)
+            val uiCelPoint = UiCelPoints.valueOf(listForPoint.celPoint.name)
+            if (uiCelPoint.seId in summCPIds) {
+                for (summableCP in definition.summableCelPoint) {
+                    if (summableCP.celPoint.seId == uiCelPoint.seId) {
+                        if (summableCP.positive)
+                            presentableAddValues.add(PresentableTSValues(uiCelPoint, positionsForPoint))
+                        else
+                            prentableSubtractValues.add(PresentableTSValues(uiCelPoint, positionsForPoint))
+                    }
+                }
+            }
+        }
+        return listOf(presentableAddValues, prentableSubtractValues)
     }
 
 }

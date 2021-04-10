@@ -15,6 +15,7 @@ import com.radixpro.enigma.libfe.fxbuilders.*
 import com.radixpro.enigma.libfe.texts.Rosetta
 import com.radixpro.enigma.libfe.texts.Rosetta.getText
 import javafx.application.Platform
+import javafx.css.Style
 import javafx.event.EventHandler
 
 import javafx.geometry.Insets
@@ -28,6 +29,7 @@ import javafx.scene.layout.Pane
 import javafx.stage.Modality
 import javafx.stage.Stage
 import java.util.*
+import javax.swing.plaf.metal.MetalIconFactory.LIGHT
 
 class ScreenStart(private val screenInput: ScreenInput,
                   private val screenAbout: ScreenAbout,

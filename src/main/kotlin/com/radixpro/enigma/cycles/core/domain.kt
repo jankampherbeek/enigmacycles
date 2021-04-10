@@ -6,8 +6,6 @@
 
 package com.radixpro.enigma.cycles.core
 
-import javafx.scene.chart.XYChart
-
 data class SummableCelPoint(val celPoint: UiCelPoints, val positive: Boolean)
 
 data class CycleCoordinates(val cycleCoordinateType: CycleCoordinateTypes,
@@ -25,14 +23,14 @@ data class CycleDefinition(val cycleCoordinates: CycleCoordinates,
 
 data class PresentableTSValues(val point: UiCelPoints, val positions: List<Double>)
 
-data class PresentableCycleResult(val definition: CycleDefinition,
-                                  val jdNrs: List<Double>,
-                                  val dateTexts: List<String>,
-                                  val presValues: List<PresentableTSValues>)
+data class PresentableSingleCycleResult(val definition: CycleDefinition,
+                                        val jdNrs: List<Double>,
+                                        val dateTexts: List<String>,
+                                        val presValues: List<PresentableTSValues>)
 
-
-
-//data class PointTimeSeries(val point: UiCelPoints, val results: List<XYChart.Series<Number, Number>>)
-//
-//data class TimeSeriesChartData(val definition: CycleDefinition, val series: List<PointTimeSeries>)
+data class PresentableSummedCycleResult(val definition: CycleDefinition,
+                                        val jdNrs: List<Double>,
+                                        val dateTexts: List<String>,
+                                        val presValuesAdd: List<PresentableTSValues>,
+                                        val presValuesSubtract: List<PresentableTSValues>)
 

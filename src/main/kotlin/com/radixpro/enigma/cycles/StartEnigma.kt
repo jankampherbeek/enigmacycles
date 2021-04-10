@@ -3,9 +3,10 @@
  * Enigma Charts is open source.
  * Please check the file copyright.txt in the root of the source for further details
  */
-package com.radixpro.enigma.charts
+package com.radixpro.enigma.cycles
 
 import com.radixpro.enigma.cycles.di.Injector
+import com.radixpro.enigma.cycles.ui.TestGraphics
 import javafx.application.Application
 import javafx.stage.Stage
 
