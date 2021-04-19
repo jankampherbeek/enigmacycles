@@ -12,10 +12,7 @@ import com.radixpro.enigma.cycles.helpers.DateValidator
 import com.radixpro.enigma.cycles.helpers.LanguageManager
 import com.radixpro.enigma.cycles.process.CycleRequestCalculator
 import com.radixpro.enigma.cycles.process.CycleRequestProcessor
-import com.radixpro.enigma.cycles.ui.ScreenAbout
-import com.radixpro.enigma.cycles.ui.ScreenInput
-import com.radixpro.enigma.cycles.ui.ScreenManual
-import com.radixpro.enigma.cycles.ui.ScreenStart
+import com.radixpro.enigma.cycles.ui.*
 import com.radixpro.enigma.libbe.api.AstronApi
 
 object Injector {
@@ -49,7 +46,12 @@ object Injector {
     }
 
     private fun injectScreenInput(): ScreenInput {
-        return ScreenInput(injectDateValidator())
+        return ScreenInput(injectDateValidator(), injectCycleRequestCalculator(), injectCycleResultConverter(),
+            injectScreenLineChart())
+    }
+
+    private fun injectScreenLineChart(): ScreenLineChart {
+        return ScreenLineChart()
     }
 
     private fun injectScreenManual(): ScreenManual {

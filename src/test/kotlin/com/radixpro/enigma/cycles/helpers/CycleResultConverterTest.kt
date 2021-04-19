@@ -13,39 +13,109 @@ import com.radixpro.enigma.libbe.domain.TimeSeriesValues
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldHave
+import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import kotlin.test.BeforeTest
 
 internal class CycleResultConverterTest {
 
     private val margin = 0.00000001
     private val converter = CycleResultConverter(AstronApi())
+    private lateinit var responseSingle: PresentableSingleCycleResult
+    private lateinit var responseSummed: PresentableSummedCycleResult
 
-    @Test
-    fun `Converting resonse for singlepoint cycles to a presentable version should give the correct result`() {
-        val definition = createDefinitionForSinglePoint()
-        val tsValues = createSingleTsValues()
-        val response = converter.responseSingleToPresResult(definition, tsValues)
-        response.dateTexts.size shouldBeExactly 3
-        response.jdNrs.size shouldBeExactly 3
-        response.presValues.size shouldBeExactly 2
-        response.jdNrs[1] shouldBe (1234568.0 plusOrMinus margin)
-        response.dateTexts[2] shouldBe "-1332/01/13 12:00:00"
-        response.presValues[0].point shouldBe UiCelPoints.SUN
-        response.presValues[0].positions[1] shouldBe (101.01 plusOrMinus margin)
+    @BeforeEach
+    fun setUp() {
+        responseSingle = converter.responseSingleToPresResult(createDefinitionForSinglePoint(), createSingleTsValues())
+        responseSummed = converter.responseSummedToPresResult(createDefinitionForSummedPoint(), createSummedTsValues())
     }
 
     @Test
-    fun `Converting response for summed cycles to a presentable version should give the correct result`() {
-        val definition = createDefinitionForSummedPoint()
-        val summedValues = createSummedTsValues()
-        val response = converter.responseSummedToPresResult(definition, summedValues)
-        response.dateTexts.size shouldBeExactly 3
-        response.jdNrs.size shouldBeExactly 3
-        response.presValuesAdd.size shouldBeExactly 2
-        response.presValuesSubtract.size shouldBeExactly 2
-        response.jdNrs[2] shouldBe (1234569.0 plusOrMinus margin)
-        response.dateTexts[0] shouldBe "-1332/01/11 12:00:00"
+    fun `Nr of dateTexts in reponseSingle should be correct`(){
+        responseSingle.dateTexts.size shouldBeExactly 3
+    }
 
+    @Test
+    fun `Nr of dateTexts in reponseSummed should be correct`(){
+        responseSummed.dateTexts.size shouldBeExactly 3
+    }
+
+    @Test
+    fun `Nr of jdnrs in responseSingle should be correct`() {
+        responseSingle.jdNrs.size shouldBeExactly 3
+    }
+
+    @Test
+    fun `Nr of jdnrs in responseSummed should be correct`() {
+        responseSummed.jdNrs.size shouldBeExactly 3
+    }
+
+    @Test
+    fun `Nr of presentable values in responseSingle should be correct`(){
+        responseSingle.presValues.size shouldBeExactly 2
+    }
+
+    @Test
+    fun `Nr of addable presentable values in responseSummed should be correct`(){
+        responseSummed.presValuesAdd.size shouldBeExactly 2
+    }
+
+    @Test
+    fun `Nr of subtractable presentable values in responseSummed should be correct`(){
+        responseSummed.presValuesSubtract.size shouldBeExactly 2
+    }
+
+    @Test
+    fun `Value for jdnr in responseSingle should be correct`(){
+        responseSingle.jdNrs[1] shouldBe (1234568.0 plusOrMinus margin)
+    }
+
+    @Test
+    fun `Value for jdnr in responseSummed should be correct`(){
+        responseSummed.jdNrs[2] shouldBe (1234569.0 plusOrMinus margin)
+    }
+
+    @Test
+    fun `Value for dateTxt in responseSingle should be correct`() {
+        responseSingle.dateTexts[2] shouldBe "-1332/01/13 12:00:00"
+    }
+
+    @Test
+    fun `Value for dateTxt in responseSummed should be correct`() {
+        responseSummed.dateTexts[0] shouldBe "-1332/01/11 12:00:00"
+    }
+
+    @Test
+    fun `Indication of celestial point for a given range of values in responseSingle should be correct`(){
+        responseSingle.presValues[0].point shouldBe UiCelPoints.SUN
+    }
+
+    @Test
+    fun `Indication of celestial point for a given range of addable values in responseSummed should be correct`(){
+        responseSummed.presValuesAdd[1].point shouldBe UiCelPoints.MOON
+    }
+
+    @Test
+    fun `Indication of celestial point for a given range of subtractable values in responseSummed should be correct`(){
+        responseSummed.presValuesSubtract[0].point shouldBe UiCelPoints.JUPITER
+    }
+
+    @Test
+    fun `Position of celestial point in responseSingle should be correct`() {
+        responseSingle.presValues[0].positions[1] shouldBe (101.01 plusOrMinus margin)
+    }
+
+    @Test
+    fun `Position of addable celestial point in responseSummable should be correct`() {
+        responseSummed.presValuesAdd[1].positions[1] shouldBe (132.5 plusOrMinus margin)
+    }
+
+    @Test
+    fun `Position of subtractable celestial point in responseSummable should be correct`() {
+        responseSummed.presValuesSubtract[0].positions[0] shouldBe (3.5 plusOrMinus margin)
     }
 
     private fun createDefinitionForSinglePoint(): CycleDefinition {

@@ -7,9 +7,11 @@
 package com.radixpro.enigma.cycles.ui
 
 import com.radixpro.enigma.cycles.core.*
+import com.radixpro.enigma.cycles.helpers.CycleResultConverter
 import com.radixpro.enigma.cycles.helpers.DateValidator
 import com.radixpro.enigma.cycles.helpers.Help
 import com.radixpro.enigma.cycles.helpers.InfoLabelBuilder
+import com.radixpro.enigma.cycles.process.CycleRequestCalculator
 import com.radixpro.enigma.cycles.ui.UiDictionary.GAP
 import com.radixpro.enigma.cycles.ui.UiDictionary.INPUT_DEFAULT_STYLE
 import com.radixpro.enigma.cycles.ui.UiDictionary.INPUT_ERROR_STYLE
@@ -37,7 +39,10 @@ import org.controlsfx.control.CheckComboBox
 import java.lang.Integer.max
 
 
-class ScreenInput(private val dateValidator: DateValidator) {
+class ScreenInput(private val dateValidator: DateValidator,
+                  private val calculator: CycleRequestCalculator,
+                  private val converter: CycleResultConverter,
+                  private val screenLineChart: ScreenLineChart) {
 
     private val height = 800.0
     private val width = 800.0
@@ -443,7 +448,10 @@ class ScreenInput(private val dateValidator: DateValidator) {
 
     private fun onCalculate() {
         val cycleSettings = defineCycleSettings()
-        println("Perform calculation...")
+        // TODO dit is een tijdelijke oplossing, aparte controller maken
+        val tsValues = calculator.calculateCycleRequest(cycleSettings)
+        val presResult = converter.responseSingleToPresResult(cycleSettings, tsValues)
+        screenLineChart.show(presResult)
     }
 
     private fun defineCycleSettings(): CycleDefinition {
