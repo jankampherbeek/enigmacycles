@@ -12,7 +12,7 @@ import javafx.scene.Scene
 import javafx.scene.chart.NumberAxis
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
-import javafx.embed.swing.SwingFXUtils;
+//import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO
 
 import javafx.scene.image.WritableImage
@@ -72,7 +72,7 @@ class TestGraphics {
         //Saving the scene as image
         val image: WritableImage = scene.snapshot(null)
         val file = File("D:\\tempChart.png")
-        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "PNG", file)
+//        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "PNG", file)
         println("Image Saved")
     }
 
