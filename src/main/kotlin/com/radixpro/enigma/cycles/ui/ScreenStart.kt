@@ -6,6 +6,7 @@
 
 package com.radixpro.enigma.cycles.ui
 
+import com.jfoenix.controls.JFXButton
 import com.radixpro.enigma.cycles.helpers.InfoLabelBuilder
 import com.radixpro.enigma.cycles.helpers.LanguageManager
 import com.radixpro.enigma.cycles.ui.UiDictionary.STYLE_TITLE_PANE
@@ -38,8 +39,8 @@ class ScreenStart(private val screenInput: ScreenInput,
     private val width = 660.0
     private lateinit var language: String
     private lateinit var version: String
-    private lateinit var btnStart: Button
-    private lateinit var btnExit: Button
+    private lateinit var btnStart: JFXButton
+    private lateinit var btnExit: JFXButton
     private lateinit var buttonBar: ButtonBar
     private lateinit var menuBar: MenuBar
     private lateinit var miLanguageDu: MenuItem
@@ -99,8 +100,10 @@ fun show() {
     }
 
     private fun defineButtonBar() {
-        btnStart = ButtonBuilder().setText(getText("screenstart.btnstart")).build()
-        btnExit = ButtonBuilder().setText(getText("shared.btnexit")).build()
+//        btnStart = ButtonBuilder().setText(getText("screenstart.btnstart")).build()
+//        btnExit = ButtonBuilder().setText(getText(v)).build()
+        btnStart = JFXButton(getText("screenstart.btnstart"))
+        btnExit = JFXButton(getText("shared.btnexit"))
         buttonBar = ButtonBarBuilder().setButtons(arrayListOf(btnStart, btnExit)).build()
     }
 

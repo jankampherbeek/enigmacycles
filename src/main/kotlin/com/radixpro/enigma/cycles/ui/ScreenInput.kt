@@ -6,6 +6,7 @@
 
 package com.radixpro.enigma.cycles.ui
 
+import com.jfoenix.controls.*
 import com.radixpro.enigma.cycles.core.*
 import com.radixpro.enigma.cycles.helpers.CycleResultConverter
 import com.radixpro.enigma.cycles.helpers.DateValidator
@@ -35,6 +36,7 @@ import javafx.stage.Modality
 import javafx.stage.Stage
 import java.util.*
 import javafx.scene.control.*
+import javafx.scene.paint.Color
 import org.controlsfx.control.CheckComboBox
 import java.lang.Integer.max
 
@@ -57,11 +59,11 @@ class ScreenInput(private val dateValidator: DateValidator,
     private lateinit var version: String
     private lateinit var txtTitle: String
 
-    private lateinit var btnCalculate: Button
-    private lateinit var btnClose: Button
-    private lateinit var btnHelp: Button
+    private lateinit var btnCalculate: JFXButton
+    private lateinit var btnClose: JFXButton
+    private lateinit var btnHelp: JFXButton
     private lateinit var buttonBar: ButtonBar
-    private lateinit var cbAyanamsha: ComboBox<String>
+    private lateinit var cbAyanamsha: JFXComboBox<String>
     private lateinit var ccbCelPoints: CheckComboBox<String>
     private lateinit var ccbCelPointsAdd: CheckComboBox<String>
     private lateinit var ccbCelPointSubtract: CheckComboBox<String>
@@ -72,29 +74,21 @@ class ScreenInput(private val dateValidator: DateValidator,
     private lateinit var lblCelPointsSubtract: Label
     private lateinit var lblObserverPos: Label
 
-    private lateinit var rbCalendarGreg: RadioButton
-    private lateinit var rbCalendarJul: RadioButton
-    private lateinit var rbCoordinateDecl: RadioButton
-    private lateinit var rbCoordinateLat: RadioButton
-    private lateinit var rbCoordinateLon: RadioButton
-    private lateinit var rbCoordinateRa: RadioButton
-    private lateinit var rbCycleTypeSinglePoints: RadioButton
-    private lateinit var rbCycleTypeSumOfPoints: RadioButton
-    private lateinit var rbObserverPosGeocentric: RadioButton
-    private lateinit var rbObserverPosHeliocentric: RadioButton
-    private lateinit var rbZodiacTropical: RadioButton
-    private lateinit var rbZodiacSidereal: RadioButton
+    private lateinit var tbCalendar: JFXToggleButton
+    private lateinit var tbCycleType: JFXToggleButton
+    private lateinit var tbObserverPos: JFXToggleButton
+    private lateinit var tbZodiac: JFXToggleButton
 
-    private lateinit var tfEndDate: TextField
-    private lateinit var tfInterval: TextField
-    private lateinit var tfStartDate: TextField
+    private lateinit var rbCoordinateDecl: JFXRadioButton
+    private lateinit var rbCoordinateLat: JFXRadioButton
+    private lateinit var rbCoordinateLon: JFXRadioButton
+    private lateinit var rbCoordinateRa: JFXRadioButton
 
-    private lateinit var tgCalendar: ToggleGroup
+    private lateinit var tfEndDate: JFXTextField
+    private lateinit var tfInterval: JFXTextField
+    private lateinit var tfStartDate: JFXTextField
+
     private lateinit var tgCoordinate: ToggleGroup
-    private lateinit var tgCycleType: ToggleGroup
-    private lateinit var tgObserverPos: ToggleGroup
-    private lateinit var tgZodiac: ToggleGroup
-
     private lateinit var stage: Stage
 
 
@@ -188,11 +182,10 @@ class ScreenInput(private val dateValidator: DateValidator,
             .setPadding(Insets(GAP))
             .setStyleSheet(STYLESHEET)
             .build()
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblcycletype")).build(), 0, 0, 2, 1)
         innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infocycletype")).setPrefWidth(halfwidth)
             .setMaxWidth(halfwidth).build(), 2, 0, 1, 2)
-        innerGrid.add(rbCycleTypeSinglePoints, 0, 1, 1, 1)
-        innerGrid.add(rbCycleTypeSumOfPoints, 1, 1, 1, 1)
+        innerGrid.add(LabelBuilder().setText(getText("screeninput.rbsinglepoints")).build(), 0, 0, 1, 1)
+        innerGrid.add(tbCycleType, 1, 0, 1, 1)
         innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 2, 3, 1)
         innerGrid.add(lblCelPoints, 0, 3, 2, 1)
         innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infocelpoints")).setPrefWidth(halfwidth)
@@ -208,19 +201,21 @@ class ScreenInput(private val dateValidator: DateValidator,
         innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 11, 3, 1)
         innerGrid.add(defineSubTitlePane(getText("screeninput.subtitleastronpos")), 0, 12, 3, 1)
         innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 13, 3, 1)
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblzodiac")).build(), 0, 14, 2, 1)
+
         innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infozodiac")).setPrefWidth(halfwidth)
             .setMaxWidth(halfwidth).build(), 2, 14, 1, 3)
-        innerGrid.add(rbZodiacTropical, 0, 15, 1, 1)
-        innerGrid.add(rbZodiacSidereal, 1, 15, 1, 1)
+        innerGrid.add(LabelBuilder().setText(getText("screeninput.rbzodiactropical")).build(), 0, 15, 1, 1)
+        innerGrid.add(tbZodiac, 1, 15, 2, 1)
+
         innerGrid.add(lblAyanamsha, 0, 16, 2, 1)
         innerGrid.add(cbAyanamsha, 0, 17, 2, 1)
         innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 18, 3, 1)
-        innerGrid.add(lblObserverPos, 0, 19, 1, 1)
+
         innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infoobserverpos")).setPrefWidth(halfwidth)
             .setMaxWidth(halfwidth).build(), 2, 19, 1, 2)
-        innerGrid.add(rbObserverPosGeocentric, 0, 20, 1, 1)
-        innerGrid.add(rbObserverPosHeliocentric, 1, 20, 1, 1)
+        innerGrid.add(lblObserverPos, 0, 19, 1, 1)
+        innerGrid.add(tbObserverPos, 1, 19, 1, 1)
+
         innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 21, 3, 1)
         innerGrid.add(LabelBuilder().setText(getText("screeninput.lblcoordinate")).build(), 0, 22, 2, 1)
         innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infocoordinates")).setPrefWidth(halfwidth)
@@ -238,9 +233,8 @@ class ScreenInput(private val dateValidator: DateValidator,
         innerGrid.add(tfStartDate, 0, 29, 2, 1)
         innerGrid.add(LabelBuilder().setText(getText("screeninput.lblenddate")).build(), 0, 30, 2, 1)
         innerGrid.add(tfEndDate, 0, 31, 2, 1)
-        innerGrid.add(LabelBuilder().setText(getText("screeninput.lblcalendar")).build(), 0, 32, 2, 1)
-        innerGrid.add(rbCalendarGreg, 0, 33, 1, 1)
-        innerGrid.add(rbCalendarJul, 1, 33, 1, 1)
+        innerGrid.add(LabelBuilder().setText(getText("shared.calendargreg")).build(), 0, 33, 1, 1)
+        innerGrid.add(tbCalendar, 1, 33, 1, 1)
         innerGrid.add(PaneBuilder().setPrefHeight(spaceheight).build(), 0, 34, 3, 1)
         innerGrid.add(LabelBuilder().setText(getText("screeninput.lblinterval")).build(), 0, 35, 2, 1)
         innerGrid.add(InfoLabelBuilder().setText(getText("screeninput.infointerval")).setPrefWidth(halfwidth)
@@ -268,13 +262,14 @@ class ScreenInput(private val dateValidator: DateValidator,
         lblCelPoints = LabelBuilder().setText(getText("screeninput.lblcelpoints")).build()
         lblCelPointsAdd = LabelBuilder().setText(getText("screeninput.lblcelpointsadd")).build()
         lblCelPointsSubtract = LabelBuilder().setText(getText("screeninput.lblcelpointssubtract")).build()
-        lblObserverPos = LabelBuilder().setText(getText("screeninput.lblobserverpos")).build()
+        lblObserverPos = LabelBuilder().setText(getText("screeninput.rbobserverposgeo")).build()
     }
 
     private fun defineTextFields() {
-        tfStartDate = TextFieldBuilder().build()
-        tfEndDate = TextFieldBuilder().build()
-        tfInterval = TextFieldBuilder().setPrefWidth(50.0).build()
+        tfStartDate = JFXTextField()
+        tfEndDate = JFXTextField()
+        tfInterval = JFXTextField()
+        tfInterval.prefWidth = 50.0
         tfInterval.maxWidth = 100.0
     }
 
@@ -289,66 +284,64 @@ class ScreenInput(private val dateValidator: DateValidator,
     }
 
     private fun defineComboBoxes() {
-        cbAyanamsha = ComboBox()
+        cbAyanamsha = JFXComboBox()
         cbAyanamsha.items.addAll(allAyanamshaNames)
     }
 
     private fun defineRadioButtons() {
-        tgCycleType = ToggleGroup()
-        rbCycleTypeSinglePoints = RadioButton(getText("screeninput.rbsinglepoints"))
-        rbCycleTypeSumOfPoints = RadioButton(getText("screeninput.rbsumofpoints"))
-        rbCycleTypeSinglePoints.isSelected = true
-        rbCycleTypeSinglePoints.toggleGroup = tgCycleType
-        rbCycleTypeSumOfPoints.toggleGroup = tgCycleType
-
-        tgZodiac = ToggleGroup()
-        rbZodiacTropical = RadioButton(getText("screeninput.rbzodiactropical"))
-        rbZodiacSidereal = RadioButton(getText("screeninput.rbzodiacsidereal"))
-        rbZodiacTropical.isSelected = true
-        rbZodiacTropical.toggleGroup = tgZodiac
-        rbZodiacSidereal.toggleGroup = tgZodiac
-
-        tgObserverPos = ToggleGroup()
-        rbObserverPosGeocentric = RadioButton(getText("screeninput.rbobserverposgeo"))
-        rbObserverPosHeliocentric = RadioButton(getText("screeninput.rbobserverposhelio"))
-        rbObserverPosGeocentric.isSelected = true
-        rbObserverPosGeocentric.toggleGroup = tgObserverPos
-        rbObserverPosHeliocentric.toggleGroup = tgObserverPos
+        tbCalendar = JFXToggleButton()
+        tbCalendar.text = getText("shared.calendarjul")
+        tbCalendar.toggleColor = Color.STEELBLUE
+        tbCalendar.toggleLineColor=Color.LIGHTSTEELBLUE
+        tbCycleType = JFXToggleButton()
+        tbCycleType.text = getText("screeninput.rbsumofpoints")
+        tbCycleType.toggleColor = Color.STEELBLUE
+        tbCycleType.toggleLineColor = Color.LIGHTSTEELBLUE
 
         tgCoordinate = ToggleGroup()
-        rbCoordinateDecl = RadioButton(getText("screeninput.rbcoordinatedecl"))
-        rbCoordinateLat = RadioButton(getText("screeninput.rbcoordinatelat"))
-        rbCoordinateLon = RadioButton(getText("screeninput.rbcoordinatelon"))
-        rbCoordinateRa = RadioButton(getText("screeninput.rbcoordinatera"))
+        rbCoordinateDecl = JFXRadioButton(getText("screeninput.rbcoordinatedecl"))
+        rbCoordinateLat = JFXRadioButton(getText("screeninput.rbcoordinatelat"))
+        rbCoordinateLon = JFXRadioButton(getText("screeninput.rbcoordinatelon"))
+        rbCoordinateRa = JFXRadioButton(getText("screeninput.rbcoordinatera"))
+        rbCoordinateDecl.selectedColor = Color.STEELBLUE
+        rbCoordinateDecl.unSelectedColor = Color.LIGHTSTEELBLUE
+        rbCoordinateRa.selectedColor = Color.STEELBLUE
+        rbCoordinateRa.unSelectedColor = Color.LIGHTSTEELBLUE
+        rbCoordinateLon.selectedColor = Color.STEELBLUE
+        rbCoordinateLon.unSelectedColor = Color.LIGHTSTEELBLUE
+        rbCoordinateLat.selectedColor = Color.STEELBLUE
+        rbCoordinateLat.unSelectedColor = Color.LIGHTSTEELBLUE
+
         rbCoordinateLon.isSelected = true
         rbCoordinateLon.toggleGroup = tgCoordinate
         rbCoordinateDecl.toggleGroup = tgCoordinate
         rbCoordinateLat.toggleGroup = tgCoordinate
         rbCoordinateRa.toggleGroup = tgCoordinate
-
-        tgCalendar = ToggleGroup()
-        rbCalendarGreg = RadioButton(getText("shared.calendargreg"))
-        rbCalendarJul = RadioButton(getText("shared.calendarjul"))
-        rbCalendarGreg.isSelected = true
-        rbCalendarGreg.toggleGroup = tgCalendar
-        rbCalendarJul.toggleGroup = tgCalendar
-
+        tbObserverPos = JFXToggleButton()
+        tbObserverPos.text = getText("screeninput.rbobserverposhelio")
+        tbObserverPos.toggleColor = Color.STEELBLUE
+        tbObserverPos.toggleLineColor = Color.LIGHTSTEELBLUE
+        tbZodiac = JFXToggleButton()
+        tbZodiac.text = getText("screeninput.rbzodiacsidereal")
+        tbZodiac.toggleColor = Color.STEELBLUE
+        tbZodiac.toggleLineColor=Color.LIGHTSTEELBLUE
     }
 
     private fun defineButtonBar() {
-        btnHelp = ButtonBuilder().setText(getText("shared.btnhelp")).build()
-        btnClose = ButtonBuilder().setText(getText("shared.btn_close")).build()
-        btnCalculate = ButtonBuilder().setText(getText("screeninput.btncalculate")).setDisabled(true)
-            .setFocusTraversable(false).build()
+        btnHelp = JFXButton(getText("shared.btnhelp"))
+        btnClose = JFXButton(getText("shared.btn_close"))
+        btnCalculate = JFXButton(getText("screeninput.btncalculate"))
+        btnCalculate.isDisable = true
+        btnCalculate.isFocusTraversable = false
         buttonBar = ButtonBarBuilder().setButtons(arrayListOf(btnCalculate, btnHelp, btnClose)).build()
     }
 
     private fun defineListeners() {
-        tgCycleType.selectedToggleProperty().addListener { _: ObservableValue<out Toggle?>?, _: Toggle?, _: Toggle? -> checkStatus() }
-        tgZodiac.selectedToggleProperty().addListener { _: ObservableValue<out Toggle?>?, _: Toggle?, _: Toggle? -> checkStatus()  }
-        tgObserverPos.selectedToggleProperty().addListener { _: ObservableValue<out Toggle?>?, _: Toggle?, _: Toggle? -> checkStatus()  }
+        tbCycleType.selectedProperty().addListener{ _, _, _ -> checkStatus()  }
+        tbZodiac.selectedProperty().addListener{ _, _, _ -> checkStatus()  }
+        tbObserverPos.selectedProperty().addListener{ _, _, _ -> checkStatus()  }
         tgCoordinate.selectedToggleProperty().addListener { _: ObservableValue<out Toggle?>?, _: Toggle?, _: Toggle? -> checkStatus()  }
-        tgCalendar.selectedToggleProperty().addListener { _: ObservableValue<out Toggle?>?, _: Toggle?, _: Toggle? -> checkStatus()  }
+        tbCalendar.selectedProperty().addListener{ _, _, _ -> checkStatus()  }
 
         tfStartDate.textProperty().addListener { _, _, _ -> checkStatus() }
         tfEndDate.textProperty().addListener { _, _, _ -> checkStatus() }
@@ -360,11 +353,11 @@ class ScreenInput(private val dateValidator: DateValidator,
     }
 
     private fun checkStatus() {
-        disEnableCycleType(tgCycleType.selectedToggle == rbCycleTypeSinglePoints)
+        disEnableCycleType(!tbCycleType.isSelected)
         disEnableCenter(tgCoordinate.selectedToggle == rbCoordinateRa
                 || tgCoordinate.selectedToggle == rbCoordinateDecl)
-        disEnableEquatorial(tgObserverPos.selectedToggle == rbObserverPosHeliocentric)
-        disEnableAyanamsha(tgZodiac.selectedToggle == rbZodiacTropical)
+        disEnableEquatorial(tbObserverPos.isSelected)
+        disEnableAyanamsha(!tbZodiac.isSelected)
         statusComplete = defineStatusComplete()
         btnCalculate.isDisable = !statusComplete
         btnCalculate.isFocusTraversable = statusComplete
@@ -381,8 +374,7 @@ class ScreenInput(private val dateValidator: DateValidator,
 
     private fun disEnableCenter(equatorial: Boolean) {
         lblObserverPos.isDisable = equatorial
-        rbObserverPosHeliocentric.isDisable = equatorial
-        rbObserverPosGeocentric.isDisable = equatorial
+        tbObserverPos.isDisable = equatorial
     }
 
     private fun disEnableEquatorial(helio: Boolean) {
@@ -397,13 +389,13 @@ class ScreenInput(private val dateValidator: DateValidator,
 
     private fun defineStatusComplete(): Boolean {
         var statusFound = true
-        if (tgCycleType.selectedToggle == rbCycleTypeSinglePoints) {
-            if (ccbCelPoints.checkModel.checkedIndices.size == 0) statusFound = false
-        } else {
-            if (ccbCelPointsAdd.checkModel.checkedIndices.size == 0
-                && ccbCelPointSubtract.checkModel.checkedIndices.size == 0) statusFound = false
-        }
-        if (tgZodiac.selectedToggle == rbZodiacSidereal && cbAyanamsha.selectionModel.isEmpty)  statusFound = false
+          if (tbCycleType.isSelected) {
+              if (ccbCelPointsAdd.checkModel.checkedIndices.size == 0
+                 && ccbCelPointSubtract.checkModel.checkedIndices.size == 0) statusFound = false
+          } else {
+              if (ccbCelPoints.checkModel.checkedIndices.size == 0) statusFound = false
+          }
+        if (tbZodiac.isSelected && cbAyanamsha.selectionModel.isEmpty)  statusFound = false
         if (!validateDates()) statusFound = false
         if (!validateInterval()) statusFound = false
         return statusFound
@@ -411,14 +403,14 @@ class ScreenInput(private val dateValidator: DateValidator,
 
     private fun validateDates(): Boolean {
         var allDatesOk = true
-        var dateOk = dateValidator.checkDate(tfStartDate.text, tgCalendar.selectedToggle == rbCalendarGreg)
+        var dateOk = dateValidator.checkDate(tfStartDate.text, tbCalendar.isSelected)
         if (tfStartDate.text.isBlank()) allDatesOk = false
         else if (!dateOk) {
             tfStartDate.style = INPUT_ERROR_STYLE
             allDatesOk = false
         } else tfStartDate.style = INPUT_DEFAULT_STYLE
 
-        dateOk = dateValidator.checkDate(tfEndDate.text, tgCalendar.selectedToggle == rbCalendarGreg)
+        dateOk = dateValidator.checkDate(tfEndDate.text, tbCalendar.isSelected)
         if (tfEndDate.text.isBlank()) allDatesOk = false
         else if (!dateOk) {
             tfEndDate.style = INPUT_ERROR_STYLE
@@ -430,7 +422,6 @@ class ScreenInput(private val dateValidator: DateValidator,
     private fun validateInterval(): Boolean {
         if (tfInterval.text.isBlank()) return false
         try {
-            val testValue = tfInterval.text.toDouble()
             tfInterval.style = INPUT_DEFAULT_STYLE
         } catch(e: Exception) {
             tfInterval.style = INPUT_ERROR_STYLE
@@ -461,22 +452,13 @@ class ScreenInput(private val dateValidator: DateValidator,
             rbCoordinateRa -> CycleCoordinateTypes.RIGHT_ASCENSION
             else -> CycleCoordinateTypes.DECLINATION
         }
-        val zodiac = when(tgZodiac.selectedToggle) {
-            rbZodiacTropical -> Zodiac.TROPICAL
-            else -> Zodiac.SIDEREAL
-        }
+        val zodiac = if (tbZodiac.isSelected) Zodiac.SIDEREAL else Zodiac.TROPICAL
         val ayanamshaIndex = max(1, cbAyanamsha.selectionModel.selectedIndex)   // use Fagan ayanamsha if none is defined, for tropical this will be ignored
         val ayanamsha = allAyanamshas[ayanamshaIndex]
         val cycleCoordinates = CycleCoordinates(cycleCoordinateType, zodiac, ayanamsha)
         val cyclePeriod = CyclePeriod(tfStartDate.text, tfEndDate.text, tfInterval.text.toDouble(), true)
-        val center = when(tgObserverPos.selectedToggle) {
-            rbObserverPosGeocentric -> Center.GEOCENTRIC
-            else -> Center.HELIOCENTRIC
-        }
-        val cycleType = when(tgCycleType.selectedToggle) {
-            rbCycleTypeSinglePoints -> CycleType.SINGLE_POINT
-            else -> CycleType.SUM_OF_POINTS
-        }
+        val center = if (tbObserverPos.isSelected) Center.HELIOCENTRIC else Center.GEOCENTRIC
+        val cycleType = if (tbCycleType.isSelected) CycleType.SUM_OF_POINTS else CycleType.SINGLE_POINT
         val celPoints = mutableListOf<UiCelPoints>()
         for (cpIndex in ccbCelPoints.checkModel.checkedIndices) celPoints.add(allCelPoints[cpIndex])
         val summableCelPoints = mutableListOf<SummableCelPoint>()

@@ -6,6 +6,7 @@
 
 package com.radixpro.enigma.cycles.ui
 
+import com.jfoenix.controls.JFXButton
 import com.radixpro.enigma.cycles.ui.UiDictionary.GAP
 import com.radixpro.enigma.cycles.ui.UiDictionary.STYLESHEET
 import com.radixpro.enigma.cycles.ui.UiDictionary.STYLE_TITLE_PANE
@@ -86,7 +87,7 @@ class ScreenAbout {
 
     private fun defineButtonBar(): ButtonBar {
         val buttonBar = ButtonBar()
-        val btnExit: Button = ButtonBuilder().setText(Rosetta.getText("shared.btn_close")).build()
+        val btnExit = JFXButton(Rosetta.getText("shared.btn_close"))
         btnExit.onAction = EventHandler { onClose() }
         buttonBar.buttons.add(btnExit)
         return buttonBar
