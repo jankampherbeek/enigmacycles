@@ -30,6 +30,10 @@ import javafx.stage.Modality
 import javafx.stage.Stage
 import java.util.*
 
+/**
+ * To be replaced with ScreenSplash and ScreenStart.
+ * @deprecated
+ */
 class ScreenStart(private val screenInput: ScreenInput,
                   private val screenAbout: ScreenAbout,
                   private val screenManual: ScreenManual,
@@ -173,8 +177,6 @@ fun show() {
 
     private fun onCycles() {
         screenInput.show()
-//        val testGraphics = TestGraphics()
-//        testGraphics.testIt()
     }
 
     private fun onAbout() {

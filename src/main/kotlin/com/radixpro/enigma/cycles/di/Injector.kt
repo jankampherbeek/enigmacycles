@@ -58,6 +58,10 @@ object Injector {
         return ScreenManual()
     }
 
+    fun injectScreenSplash(): ScreenSplash {
+        return ScreenSplash(injectScreenStart())
+    }
+
     fun injectScreenStart(): ScreenStart {
         return ScreenStart(injectScreenInput(), injectScreenAbout(), injectScreenManual(), injectLanguageManger())
     }

@@ -6,7 +6,6 @@
 package com.radixpro.enigma.cycles
 
 import com.radixpro.enigma.cycles.di.Injector
-import com.radixpro.enigma.cycles.ui.TestGraphics
 import javafx.application.Application
 import javafx.stage.Stage
 
@@ -14,14 +13,14 @@ import javafx.stage.Stage
 /**
  * Starts the application.
  */
-class StartEnigma: Application() {
+class StartEnigma : Application() {
 
     fun run(args: Array<String?>) {
         launch(*args)
     }
 
     override fun start(primaryStage: Stage) {
-        Injector.injectScreenStart().show()
+        Injector.injectScreenSplash().show()
     }
 
 }
