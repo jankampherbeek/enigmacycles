@@ -59,18 +59,17 @@ class ScreenManual {
             .setPrefWidth(width)
             .setPrefHeight(UiDictionary.TITLE_HEIGHT)
             .setStyleClass(UiDictionary.STYLE_TITLE_PANE)
-            .setChildren(arrayListOf(
-                LabelBuilder()
+            .setChildren(LabelBuilder()
                     .setText(Rosetta.getText("screenmanual.title") )
                     .setPrefWidth(width)
                     .setStyleClass(UiDictionary.STYLE_TITLE_TEXT)
-                    .build()))
+                    .build())
             .build()
     }
 
     private fun defineMainHBox(): HBox {
         return HBoxBuilder().setPrefWidth(width).setPrefHeight(heightOfCenter)
-            .setChildren(arrayListOf(defineImage(), defineMainText())).build()
+            .setChildren(defineImage(), defineMainText()).build()
     }
 
     private fun defineMainText(): Label {

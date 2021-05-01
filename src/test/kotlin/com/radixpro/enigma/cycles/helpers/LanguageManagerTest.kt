@@ -6,6 +6,7 @@
 
 package com.radixpro.enigma.cycles.helpers
 
+import com.radixpro.enigma.libfe.texts.Rosetta
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -19,5 +20,6 @@ internal class LanguageManagerTest {
         lmgr.setCurrentLanguage("du")
         lmgr.getCurrentLanguage() shouldBe "du"
     }
+
 
 }

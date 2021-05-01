@@ -13,7 +13,6 @@ import com.radixpro.enigma.libbe.api.AstronApi
 import com.radixpro.enigma.libbe.api.JdUtRequest
 import com.radixpro.enigma.libbe.api.TimeSeriesRequest
 import com.radixpro.enigma.libbe.domain.*
-import java.sql.Time
 
 class CycleRequestProcessor(private val calculator: CycleRequestCalculator) {
 
@@ -55,9 +54,9 @@ class CycleRequestCalculator(private val astronApi: AstronApi, private val dateT
         for (point in definition.celPoints) {
             celPoints.add(CelPoints.valueOf(point.name))
         }
-        val observerPos = ObserverPos.valueOf(definition.center.name)
-        val coordinateType = if (definition.cycleCoordinates.cycleCoordinateType == CycleCoordinateTypes.LATITUDE
-            || definition.cycleCoordinates.cycleCoordinateType == CycleCoordinateTypes.LONGITUDE) CoordinateTypes.ECLIPTICAL
+        val observerPos = ObserverPos.GEOCENTRIC   // FIXME, define observerpos
+        val coordinateType = if (definition.cycleCoordinates.cycleCoordinateType == CycleCoordinateTypes.GEO_LATITUDE
+            || definition.cycleCoordinates.cycleCoordinateType == CycleCoordinateTypes.GEO_LONGITUDE) CoordinateTypes.ECLIPTICAL
         else CoordinateTypes.EQUATORIAL
         val location = Location(0.0, 0.0)
         val interval = definition.cyclePeriod.interval

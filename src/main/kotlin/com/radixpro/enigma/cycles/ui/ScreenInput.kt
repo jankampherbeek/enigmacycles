@@ -74,6 +74,8 @@ class ScreenInput(private val dateValidator: DateValidator,
     private lateinit var lblCelPointsSubtract: Label
     private lateinit var lblObserverPos: Label
 
+
+
     private lateinit var tbCalendar: JFXToggleButton
     private lateinit var tbCycleType: JFXToggleButton
     private lateinit var tbObserverPos: JFXToggleButton
@@ -118,6 +120,8 @@ class ScreenInput(private val dateValidator: DateValidator,
         checkStatus()
     }
 
+
+
     private fun defineVersion() {
         val properties = Properties()
         properties.load(this.javaClass.classLoader.getResourceAsStream("app.properties"))
@@ -144,12 +148,11 @@ class ScreenInput(private val dateValidator: DateValidator,
             .setPrefWidth(width)
             .setPrefHeight(TITLE_HEIGHT)
             .setStyleClass(STYLE_TITLE_PANE)
-            .setChildren(arrayListOf(
-                LabelBuilder()
+            .setChildren(LabelBuilder()
                     .setText(txtTitle)
                     .setPrefWidth(width)
                     .setStyleClass(STYLE_TITLE_TEXT)
-                    .build()))
+                    .build())
             .build()
     }
 
@@ -158,12 +161,11 @@ class ScreenInput(private val dateValidator: DateValidator,
             .setPrefWidth(width)
             .setPrefHeight(SUBTITLE_HEIGHT)
             .setStyleClass(STYLE_SUBTITLE_PANE)
-            .setChildren(arrayListOf(
-                LabelBuilder()
+            .setChildren(LabelBuilder()
                     .setText(subTitle)
                     .setPrefWidth(width)
                     .setStyleClass(STYLE_SUBTITLE_TEXT)
-                    .build()))
+                    .build())
             .build()
     }
 
@@ -246,7 +248,7 @@ class ScreenInput(private val dateValidator: DateValidator,
     private fun defineCelPoints() {
         for (celPoint in UiCelPoints.values()) {
             allCelPoints.add(celPoint)
-            allCelPointNames.add(getText(celPoint.rbKey))
+//            allCelPointNames.add(getText(celPoint.rbKey))
         }
     }
 
@@ -333,7 +335,7 @@ class ScreenInput(private val dateValidator: DateValidator,
         btnCalculate = JFXButton(getText("screeninput.btncalculate"))
         btnCalculate.isDisable = true
         btnCalculate.isFocusTraversable = false
-        buttonBar = ButtonBarBuilder().setButtons(arrayListOf(btnCalculate, btnHelp, btnClose)).build()
+        buttonBar = ButtonBarBuilder().setButtons(btnCalculate, btnHelp, btnClose).build()
     }
 
     private fun defineListeners() {
@@ -447,8 +449,8 @@ class ScreenInput(private val dateValidator: DateValidator,
 
     private fun defineCycleSettings(): CycleDefinition {
         val cycleCoordinateType = when(tgCoordinate.selectedToggle) {
-            rbCoordinateLon  -> CycleCoordinateTypes.LONGITUDE
-            rbCoordinateLat -> CycleCoordinateTypes.LATITUDE
+            rbCoordinateLon  -> CycleCoordinateTypes.GEO_LONGITUDE
+            rbCoordinateLat -> CycleCoordinateTypes.GEO_LATITUDE
             rbCoordinateRa -> CycleCoordinateTypes.RIGHT_ASCENSION
             else -> CycleCoordinateTypes.DECLINATION
         }
@@ -457,14 +459,14 @@ class ScreenInput(private val dateValidator: DateValidator,
         val ayanamsha = allAyanamshas[ayanamshaIndex]
         val cycleCoordinates = CycleCoordinates(cycleCoordinateType, zodiac, ayanamsha)
         val cyclePeriod = CyclePeriod(tfStartDate.text, tfEndDate.text, tfInterval.text.toDouble(), true)
-        val center = if (tbObserverPos.isSelected) Center.HELIOCENTRIC else Center.GEOCENTRIC
+//        val center = if (tbObserverPos.isSelected) Center.HELIOCENTRIC else Center.GEOCENTRIC
         val cycleType = if (tbCycleType.isSelected) CycleType.SUM_OF_POINTS else CycleType.SINGLE_POINT
         val celPoints = mutableListOf<UiCelPoints>()
         for (cpIndex in ccbCelPoints.checkModel.checkedIndices) celPoints.add(allCelPoints[cpIndex])
         val summableCelPoints = mutableListOf<SummableCelPoint>()
         for (cpIndex in ccbCelPointsAdd.checkModel.checkedIndices) summableCelPoints.add(SummableCelPoint(allCelPoints[cpIndex], true))
         for (cpIndex in ccbCelPointSubtract.checkModel.checkedIndices) summableCelPoints.add(SummableCelPoint(allCelPoints[cpIndex], false))
-        return CycleDefinition(cycleCoordinates, center, cycleType, celPoints, summableCelPoints, cyclePeriod)
+        return CycleDefinition(cycleCoordinates, cycleType, celPoints, summableCelPoints, cyclePeriod)
     }
 
 }

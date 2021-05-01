@@ -6,6 +6,7 @@
 
 package com.radixpro.enigma.cycles.ui
 
+import com.radixpro.enigma.cycles.Cycles
 import javafx.animation.FadeTransition
 import javafx.beans.value.ObservableValue
 import javafx.concurrent.Task
@@ -29,7 +30,7 @@ import javafx.util.Duration
  * Splash screen that shows itself during 1 second after starting the application.<br/>
  * Code based on TaskBasedSplash.java by JewelSea: https://gist.github.com/jewelsea/2305098
  */
-class ScreenSplash(private val screenStart: ScreenStart) {
+class ScreenSplash(private val cycles: Cycles) {
 
     private val height = 500.0
     private val width = 500.0
@@ -57,21 +58,20 @@ class ScreenSplash(private val screenStart: ScreenStart) {
         }
         showSplash(initStage, dummyTask, object : InitCompletionHandler {
             override fun complete() {
-                showMainStage()
+                startMainProgram()
             }
         })
         Thread(dummyTask).start()
     }
 
-    private fun showMainStage() {
-        screenStart.show()
+    private fun startMainProgram() {
+        cycles.startCycles()
     }
 
     private fun showSplash(
         initStage: Stage,
         task: Task<*>,
-        initCompletionHandler: InitCompletionHandler
-    ) {
+        initCompletionHandler: InitCompletionHandler) {
         task.stateProperty()
             .addListener { _: ObservableValue<out Worker.State>?, _: Worker.State?, newState: Worker.State ->
                 if (newState == Worker.State.SUCCEEDED) {

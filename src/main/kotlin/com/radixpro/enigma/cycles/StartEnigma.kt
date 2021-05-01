@@ -11,7 +11,7 @@ import javafx.stage.Stage
 
 
 /**
- * Starts the application.
+ * Starts the splash scren which will start the main application.
  */
 class StartEnigma : Application() {
 
@@ -20,7 +20,8 @@ class StartEnigma : Application() {
     }
 
     override fun start(primaryStage: Stage) {
-        Injector.injectScreenSplash().show()
+        val screenSplash = Injector.injectScreenSplash()
+        screenSplash.show()
     }
 
 }

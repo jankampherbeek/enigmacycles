@@ -94,7 +94,7 @@ fun show() {
             .setMaxWidth(280.0).build()
         label.alignment = Pos.TOP_LEFT
         label.isWrapText = true
-        return PaneBuilder().setPrefHeight(320.0).setChildren(arrayListOf(label)).build()
+        return PaneBuilder().setPrefHeight(320.0).setChildren(label).build()
     }
 
     private fun defineVersion() {
@@ -104,11 +104,9 @@ fun show() {
     }
 
     private fun defineButtonBar() {
-//        btnStart = ButtonBuilder().setText(getText("screenstart.btnstart")).build()
-//        btnExit = ButtonBuilder().setText(getText(v)).build()
         btnStart = JFXButton(getText("screenstart.btnstart"))
         btnExit = JFXButton(getText("shared.btnexit"))
-        buttonBar = ButtonBarBuilder().setButtons(arrayListOf(btnStart, btnExit)).build()
+        buttonBar = ButtonBarBuilder().setButtons(btnStart, btnExit).build()
     }
 
     private fun createImage(): ImageView {
@@ -127,12 +125,11 @@ fun show() {
             .setPrefWidth(width)
             .setPrefHeight(TITLE_HEIGHT)
             .setStyleClass(STYLE_TITLE_PANE)
-            .setChildren(arrayListOf(
-                LabelBuilder()
+            .setChildren(LabelBuilder()
                     .setText(getText("screenstart.title") + " " + version)
                     .setPrefWidth(width)
                     .setStyleClass(STYLE_TITLE_TEXT)
-                    .build()))
+                    .build())
             .build()
     }
 

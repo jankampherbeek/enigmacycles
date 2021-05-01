@@ -29,6 +29,8 @@ import javafx.stage.Modality
 import javafx.stage.Stage
 
 class ScreenAbout {
+
+    private val controller = ControllerAbout()
     private val height = 420.0
     private val heightOfCenter = 250.0
     private val width = 620.0
@@ -37,6 +39,7 @@ class ScreenAbout {
     private lateinit var stage: Stage
 
     fun show(version: String) {
+        controller.init()
         this.version = version
         stage = Stage()
         stage.initModality(Modality.APPLICATION_MODAL)
@@ -67,22 +70,17 @@ class ScreenAbout {
             .setPrefWidth(width)
             .setPrefHeight(TITLE_HEIGHT)
             .setStyleClass(STYLE_TITLE_PANE)
-            .setChildren(arrayListOf(
-                LabelBuilder()
+            .setChildren(LabelBuilder()
                     .setText(Rosetta.getText("screenabout.title") + " " + version)
                     .setPrefWidth(width)
                     .setStyleClass(STYLE_TITLE_TEXT)
-                    .build()))
+                    .build())
             .build()
     }
 
     private fun defineMainHBox(): HBox {
         return HBoxBuilder().setPrefWidth(width).setPrefHeight(heightOfCenter)
-            .setChildren(arrayListOf(defineImage(), defineMainText())).build()
-    }
-
-    private fun defineMainText(): Label {
-        return LabelBuilder().setText(Rosetta.getText("screenabout.maintext")).build()
+            .setChildren(controller.imageView, controller.mainText).build()
     }
 
     private fun defineButtonBar(): ButtonBar {
@@ -93,15 +91,15 @@ class ScreenAbout {
         return buttonBar
     }
 
-    private fun defineImage(): ImageView {
-        val image = Image("img/ziggurat.png")
-        val imageView = ImageView(image)
-        imageView.fitWidth = 223.0
-        imageView.fitHeight = 86.0
-        imageView.isPickOnBounds = true
-        imageView.isPreserveRatio = true
-        return imageView
-    }
+//    private fun defineImage(): ImageView {
+//        val image = Image("img/ziggurat.png")
+//        val imageView = ImageView(image)
+//        imageView.fitWidth = 223.0
+//        imageView.fitHeight = 86.0
+//        imageView.isPickOnBounds = true
+//        imageView.isPreserveRatio = true
+//        return imageView
+//    }
 
     private fun onClose() {
         stage.close()
