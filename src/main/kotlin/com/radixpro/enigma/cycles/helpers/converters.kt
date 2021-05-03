@@ -45,13 +45,13 @@ class CycleResultConverter(private val astronApi: AstronApi) {
         return PresentableSingleCycleResult(definition, jdNrs, dateTxts, presValues)
     }
 
-    fun responseSummedToPresResult(definition: CycleDefinition,
-                                   values: List<TimeSeriesValues>): PresentableSummedCycleResult {
-        val jdNrs = createJdNrs(values[0])
-        val dateTxts = createDateTxts(jdNrs, definition.cyclePeriod.gregorian)
-        val presSummedValues = createSummedPresValues(definition, values)
-        return PresentableSummedCycleResult(definition, jdNrs, dateTxts, presSummedValues[0], presSummedValues[1])
-    }
+//    fun responseSummedToPresResult(definition: CycleDefinition,
+//                                   values: List<TimeSeriesValues>): PresentableSummedCycleResult {
+//        val jdNrs = createJdNrs(values[0])
+//        val dateTxts = createDateTxts(jdNrs, definition.cyclePeriod.gregorian)
+//        val presSummedValues = createSummedPresValues(definition, values)
+//        return PresentableSummedCycleResult(definition, jdNrs, dateTxts, presSummedValues[0], presSummedValues[1])
+//    }
 
     private fun createJdNrs(tsValues: TimeSeriesValues): List<Double> {
         val jdNrs = mutableListOf<Double>()
@@ -83,32 +83,32 @@ class CycleResultConverter(private val astronApi: AstronApi) {
         return presentableTSValues
     }
 
-    private fun createSummedPresValues(definition: CycleDefinition,
-                                       allTsValues: List<TimeSeriesValues>): List<List<PresentableTSValues>> {
-        val presentableAddValues = mutableListOf<PresentableTSValues>()
-        val prentableSubtractValues = mutableListOf<PresentableTSValues>()
-        val nrOfPoints = allTsValues.size
-        var summCPIds = mutableListOf<Int>()
-        for (i in 0 until definition.summableCelPoint.size) {
-            summCPIds.add(definition.summableCelPoint[i].celPoint.seId)
-        }
-        for (i in 0 until nrOfPoints) {
-            val positionsForPoint = mutableListOf<Double>()
-            val listForPoint = allTsValues[i]
-            for (value in listForPoint.timePositions) positionsForPoint.add(value.second)
-            val uiCelPoint = UiCelPoints.valueOf(listForPoint.celPoint.name)
-            if (uiCelPoint.seId in summCPIds) {
-                for (summableCP in definition.summableCelPoint) {
-                    if (summableCP.celPoint.seId == uiCelPoint.seId) {
-                        if (summableCP.positive)
-                            presentableAddValues.add(PresentableTSValues(uiCelPoint, positionsForPoint))
-                        else
-                            prentableSubtractValues.add(PresentableTSValues(uiCelPoint, positionsForPoint))
-                    }
-                }
-            }
-        }
-        return listOf(presentableAddValues, prentableSubtractValues)
-    }
+//    private fun createSummedPresValues(definition: CycleDefinition,
+//                                       allTsValues: List<TimeSeriesValues>): List<List<PresentableTSValues>> {
+//        val presentableAddValues = mutableListOf<PresentableTSValues>()
+//        val prentableSubtractValues = mutableListOf<PresentableTSValues>()
+//        val nrOfPoints = allTsValues.size
+//        var summCPIds = mutableListOf<Int>()
+//        for (i in 0 until definition.summableCelPoint.size) {
+//            summCPIds.add(definition.summableCelPoint[i].celPoint.seId)
+//        }
+//        for (i in 0 until nrOfPoints) {
+//            val positionsForPoint = mutableListOf<Double>()
+//            val listForPoint = allTsValues[i]
+//            for (value in listForPoint.timePositions) positionsForPoint.add(value.second)
+//            val uiCelPoint = UiCelPoints.valueOf(listForPoint.celPoint.name)
+//            if (uiCelPoint.seId in summCPIds) {
+//                for (summableCP in definition.summableCelPoint) {
+//                    if (summableCP.celPoint.seId == uiCelPoint.seId) {
+//                        if (summableCP.positive)
+//                            presentableAddValues.add(PresentableTSValues(uiCelPoint, positionsForPoint))
+//                        else
+//                            prentableSubtractValues.add(PresentableTSValues(uiCelPoint, positionsForPoint))
+//                    }
+//                }
+//            }
+//        }
+//        return listOf(presentableAddValues, prentableSubtractValues)
+//    }
 
 }

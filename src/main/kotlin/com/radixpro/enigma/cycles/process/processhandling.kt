@@ -20,7 +20,7 @@ class CycleRequestProcessor(private val calculator: CycleRequestCalculator) {
         val calculatedTimeSeries = calculator.calculateCycleRequest(definition)
         if (definition.cycleType == CycleType.SINGLE_POINT) {
 
-        } else if (definition.cycleType == CycleType.SUM_OF_POINTS) {
+        } else if (definition.cycleType == CycleType.WAVES) {
 
         }
 

@@ -9,7 +9,7 @@ package com.radixpro.enigma.cycles.core
 // TODO move shareable enums to libFE
 enum class CycleType(val rbKey: String) {
     SINGLE_POINT("enum.cycletype.singlepoint"),
-    SUM_OF_POINTS("enum.cycletype.sumofpoints")
+    WAVES("enum.cycletype.waves")
 }
 
 enum class CycleCoordinateTypes(val rbKey: String) {

@@ -19,7 +19,6 @@ data class CyclePeriod(val startDateTxt: String, val endDateTxt: String, val int
 data class CycleDefinition(val cycleCoordinates: CycleCoordinates,
                            val cycleType: CycleType,
                            val celPoints: List<UiCelPoints>,
-                           val summableCelPoint: List<SummableCelPoint>,
                            val cyclePeriod: CyclePeriod)
 
 data class PresentableTSValues(val point: UiCelPoints, val positions: List<Double>)

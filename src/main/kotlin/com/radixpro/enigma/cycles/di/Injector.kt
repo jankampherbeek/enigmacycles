@@ -19,7 +19,7 @@ import com.radixpro.enigma.libbe.api.AstronApi
 object Injector {
 
     fun injectControllerMain(): ControllerMain {
-        return ControllerMain()
+        return ControllerMain(injectCycleRequestCalculator(), injectCycleResultConverter())
     }
 
     fun injectCycleRequestCalculator(): CycleRequestCalculator {
@@ -54,11 +54,6 @@ object Injector {
         return ScreenAbout()
     }
 
-    private fun injectScreenInput(): ScreenInput {
-        return ScreenInput(injectDateValidator(), injectCycleRequestCalculator(), injectCycleResultConverter(),
-            injectScreenLineChart())
-    }
-
     private fun injectScreenLineChart(): ScreenLineChart {
         return ScreenLineChart()
     }
@@ -69,10 +64,6 @@ object Injector {
 
     fun injectScreenSplash(): ScreenSplash {
         return ScreenSplash(injectCycles())
-    }
-
-    fun injectScreenStart(): ScreenStart {
-        return ScreenStart(injectScreenInput(), injectScreenAbout(), injectScreenManual(), injectLanguageManger())
     }
 
     fun injectViewMain(): ViewMain {

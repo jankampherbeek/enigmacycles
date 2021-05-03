@@ -10,13 +10,11 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXComboBox
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.controls.JFXToggleButton
-import com.radixpro.enigma.cycles.core.CycleCoordinateTypes
-import com.radixpro.enigma.cycles.core.CycleType
-import com.radixpro.enigma.cycles.core.UiAyanamsha
-import com.radixpro.enigma.cycles.core.UiCelPoints
+import com.radixpro.enigma.cycles.core.*
+import com.radixpro.enigma.cycles.helpers.CycleResultConverter
+import com.radixpro.enigma.cycles.process.CycleRequestCalculator
 import com.radixpro.enigma.libfe.fragments.Titles
 import com.radixpro.enigma.libfe.fxbuilders.*
-import com.radixpro.enigma.libfe.texts.Rosetta
 import com.radixpro.enigma.libfe.texts.Rosetta.getText
 import javafx.event.EventHandler
 import javafx.geometry.Insets
@@ -35,7 +33,7 @@ import java.util.*
 
 enum class MainMessages {
     CELPOINTS_SELECTED,
-    OK_CLICKED,
+    CALCULATE_CLICKED,
     EXIT_CLICKED
 }
 
@@ -44,7 +42,6 @@ enum class MainMessages {
  */
 object ModelMain {
 
-    lateinit var selectedCycleType: CycleType
     lateinit var txtTitle: String
     lateinit var subTxtTitleAstron: String
     val allAyanamshas = mutableListOf<UiAyanamsha>()
@@ -57,16 +54,24 @@ object ModelMain {
     val allCelPointNames = mutableListOf<String>()
 
     val selectedCelPoints = mutableListOf<UiCelPoints>()
+    var selectedAyanamsha = UiAyanamsha.NONE
+    var selectedCoordinateType = CycleCoordinateTypes.GEO_LONGITUDE
+    var selectedCycleType = CycleType.SINGLE_POINT
+    var selectedStartDate = ""
+    var selectedEndDate = ""
+    var gregorian = true
+    var interval = 1.0
+
     var selectedCelPointsText = ""
-
-
 
 }
 
 /**
  * Controller for ViewMain
  */
-class ControllerMain {
+class ControllerMain(private val calculator: CycleRequestCalculator,
+                     private val converter: CycleResultConverter
+) {
 
     init { setUp()}
 
@@ -82,8 +87,8 @@ class ControllerMain {
     private fun defineTitle() {
         val properties = Properties()
         properties.load(this.javaClass.classLoader.getResourceAsStream("app.properties"))
-        ModelMain.txtTitle = Rosetta.getText("input.title") + " " + properties.getProperty("version")
-        ModelMain.subTxtTitleAstron = Rosetta.getText("input.subtitleastron")
+        ModelMain.txtTitle = getText("input.title") + " " + properties.getProperty("version")
+        ModelMain.subTxtTitleAstron = getText("input.subtitleastron")
     }
 
 
@@ -92,7 +97,7 @@ class ControllerMain {
         ModelMain.allCycleTypeNames.clear()
         for (cycleType in CycleType.values()) {
             ModelMain.allCycleTypes.add(cycleType)
-            ModelMain.allCycleTypeNames.add(Rosetta.getText(cycleType.rbKey))
+            ModelMain.allCycleTypeNames.add(getText(cycleType.rbKey))
         }
     }
 
@@ -109,7 +114,7 @@ class ControllerMain {
         ModelMain.allAyanamshaNames.clear()
         for (ayanamsha in UiAyanamsha.values()) {
             ModelMain.allAyanamshas.add(ayanamsha)
-            ModelMain.allAyanamshaNames.add(Rosetta.getText(ayanamsha.rbKey))
+            ModelMain.allAyanamshaNames.add(getText(ayanamsha.rbKey))
         }
     }
 
@@ -118,7 +123,7 @@ class ControllerMain {
         ModelMain.allCoordinateNames.clear()
         for (coordinate in CycleCoordinateTypes.values()) {
             ModelMain.allCoordinates.add(coordinate)
-            ModelMain.allCoordinateNames.add(Rosetta.getText(coordinate.rbKey))
+            ModelMain.allCoordinateNames.add(getText(coordinate.rbKey))
         }
     }
 
@@ -132,13 +137,9 @@ class ControllerMain {
 
     fun handleMessage(msg: MainMessages) {
         when (msg) {
-            MainMessages.OK_CLICKED -> onOk()
+            MainMessages.CALCULATE_CLICKED -> onCalculate()
             MainMessages.CELPOINTS_SELECTED -> checkSelectedCelPoints()
         }
-
-    }
-
-    private fun onOk() {
 
     }
 
@@ -164,6 +165,31 @@ class ControllerMain {
         return celPointText
     }
 
+    private fun onCalculate() {
+        val cycleSettings = defineCycleSettings()
+        val tsValues = calculator.calculateCycleRequest(cycleSettings)
+        val presResult = converter.responseSingleToPresResult(cycleSettings, tsValues)
+//        screenLineChart.show(presResult)
+    }
+
+    private fun defineCycleSettings(): CycleDefinition {
+
+        val cyclePeriod = CyclePeriod(
+            ModelMain.selectedStartDate,
+            ModelMain.selectedEndDate,
+            ModelMain.interval,
+            ModelMain.gregorian)
+        val zodiac = if (ModelMain.selectedAyanamsha == UiAyanamsha.NONE) Zodiac.TROPICAL else Zodiac.SIDEREAL
+        val ayanamsha = ModelMain.selectedAyanamsha
+        val celPoints = ModelMain.selectedCelPoints
+        val cycleCoordinateType = ModelMain.selectedCoordinateType
+        val cycleCoordinates = CycleCoordinates(cycleCoordinateType, zodiac, ayanamsha)
+        val cycleType = ModelMain.selectedCycleType
+        return CycleDefinition(cycleCoordinates, cycleType, celPoints, cyclePeriod)
+    }
+
+
+
 }
 
 /**
@@ -180,6 +206,9 @@ class ViewMain(private val controller: ControllerMain) {
     private lateinit var comboCycleType: JFXComboBox<String>
 
     private lateinit var btnCPInput: JFXButton
+    private lateinit var btnCalc: JFXButton
+    private lateinit var btnHelp: JFXButton
+    private lateinit var btnExit: JFXButton
     private lateinit var lblAyanamsha: Label
     private lateinit var lblCelPoints: Label
     private lateinit var lblCoordinate: Label
@@ -234,16 +263,16 @@ class ViewMain(private val controller: ControllerMain) {
     }
 
     private fun defineMenu() {
-        miExit = MenuItem(Rosetta.getText("menu.general.exit"))
-        miLangEn = MenuItem(Rosetta.getText("menu.general.en"))
-        miLangDu = MenuItem(Rosetta.getText("menu.general.du"))
-        miExportGraph = MenuItem(Rosetta.getText("menu.export.graph"))
-        miExportData = MenuItem(Rosetta.getText("menu.export.data"))
-        miHelpAbout = MenuItem(Rosetta.getText("menu.help.about"))
-        miHelpManual = MenuItem(Rosetta.getText("menu.help.manual"))
-        menuGeneral = Menu(Rosetta.getText("menu.general"))
-        menuExport = Menu(Rosetta.getText("menu.export"))
-        menuHelp = Menu(Rosetta.getText("menu.help"))
+        miExit = MenuItem(getText("menu.general.exit"))
+        miLangEn = MenuItem(getText("menu.general.en"))
+        miLangDu = MenuItem(getText("menu.general.du"))
+        miExportGraph = MenuItem(getText("menu.export.graph"))
+        miExportData = MenuItem(getText("menu.export.data"))
+        miHelpAbout = MenuItem(getText("menu.help.about"))
+        miHelpManual = MenuItem(getText("menu.help.manual"))
+        menuGeneral = Menu(getText("menu.general"))
+        menuExport = Menu(getText("menu.export"))
+        menuHelp = Menu(getText("menu.help"))
         menuGeneral.items.addAll(miLangEn, miLangDu, miExit)
         menuExport.items.addAll(miExportGraph, miExportData)
         menuHelp.items.addAll(miHelpAbout, miHelpManual)
@@ -252,21 +281,21 @@ class ViewMain(private val controller: ControllerMain) {
 
 
     private fun defineLabels() {
-        lblEndDate = LabelBuilder().setText(Rosetta.getText("input.lblenddate")).setPrefHeight(40.0).setAlignment(Pos.BOTTOM_LEFT).build()
-        lblStartDate = LabelBuilder().setText(Rosetta.getText("input.lblstartdate")).setPrefHeight(40.0).setAlignment(
+        lblEndDate = LabelBuilder().setText(getText("input.lblenddate")).setPrefHeight(40.0).setAlignment(Pos.BOTTOM_LEFT).build()
+        lblStartDate = LabelBuilder().setText(getText("input.lblstartdate")).setPrefHeight(40.0).setAlignment(
             Pos.BOTTOM_LEFT
         ).build()
-        lblInterval = LabelBuilder().setText(Rosetta.getText("input.lblinterval")).setPrefHeight(40.0).setAlignment(Pos.BOTTOM_LEFT).build()
-        lblCycleType = LabelBuilder().setText(Rosetta.getText("input.lblcycletype")).setPrefHeight(40.0).setAlignment(
+        lblInterval = LabelBuilder().setText(getText("input.lblinterval")).setPrefHeight(40.0).setAlignment(Pos.BOTTOM_LEFT).build()
+        lblCycleType = LabelBuilder().setText(getText("input.lblcycletype")).setPrefHeight(40.0).setAlignment(
             Pos.BOTTOM_LEFT
         ).build()
-        lblCelPoints = LabelBuilder().setText(Rosetta.getText("input.lblcelpoints")).setPrefHeight(50.0).setAlignment(
+        lblCelPoints = LabelBuilder().setText(getText("input.lblcelpoints")).setPrefHeight(50.0).setAlignment(
             Pos.BASELINE_LEFT
         ).build()
-        lblAyanamsha = LabelBuilder().setText(Rosetta.getText("input.lblayanamsha")).setPrefHeight(40.0).setAlignment(
+        lblAyanamsha = LabelBuilder().setText(getText("input.lblayanamsha")).setPrefHeight(40.0).setAlignment(
             Pos.BOTTOM_LEFT
         ).build()
-        lblCoordinate = LabelBuilder().setText(Rosetta.getText("input.lblcoordinate")).setPrefHeight(40.0).setAlignment(
+        lblCoordinate = LabelBuilder().setText(getText("input.lblcoordinate")).setPrefHeight(40.0).setAlignment(
             Pos.BOTTOM_LEFT
         ).build()
         lblSelectedCelPoints = Label("")
@@ -274,15 +303,19 @@ class ViewMain(private val controller: ControllerMain) {
     }
 
     private fun defineButtons() {
-        btnCPInput = ButtonBuilder().setText(Rosetta.getText("input.btncpinput")).setPrefWidth(halfWidth).setAlignment(
+        btnCPInput = ButtonBuilder().setText(getText("input.btncpinput")).setPrefWidth(halfWidth).setAlignment(
             Pos.BOTTOM_RIGHT
         ).build()
         btnCPInput.onAction = EventHandler{ onCPInput()}
+        btnCalc = ButtonBuilder().setText(getText("input.btncalc")).build()
+        btnCalc.onAction = EventHandler{ onCalc() }
+        btnHelp = ButtonBuilder().setText(getText("shr.btnhelp")).build()
+        btnExit = ButtonBuilder().setText(getText("lshr.btnexit")).build()
     }
 
     private fun defineToggleButtons() {
         tbCalendar = JFXToggleButton()
-        tbCalendar.text = Rosetta.getText("input.tbcalendar")
+        tbCalendar.text = getText("input.tbcalendar")
         tbCalendar.toggleColor = Color.STEELBLUE
         tbCalendar.toggleLineColor = Color.LIGHTSTEELBLUE
 
@@ -298,8 +331,8 @@ class ViewMain(private val controller: ControllerMain) {
     }
 
     private fun defineTextFields() {
-        tfStartDate = TextFieldBuilder().setPrefWidth(halfWidth).setPromptText(Rosetta.getText("lshr.promptdate")).build()
-        tfEndDate = TextFieldBuilder().setPrefWidth(halfWidth).setPromptText(Rosetta.getText("lshr.promptdate")).build()
+        tfStartDate = TextFieldBuilder().setPrefWidth(halfWidth).setPromptText(getText("lshr.promptdate")).build()
+        tfEndDate = TextFieldBuilder().setPrefWidth(halfWidth).setPromptText(getText("lshr.promptdate")).build()
         tfInterval = TextFieldBuilder().setPrefWidth(50.0).setMaxWidth(100.0).build()
     }
 
@@ -314,11 +347,11 @@ class ViewMain(private val controller: ControllerMain) {
             .build()
         grid.add(mbGeneral, 0, 0, 2, 1)
         grid.add(Titles.createTitlePane(ModelMain.txtTitle, width), 0, 1, 4, 1)
-        grid.add(lblStartDate, 0, 2, 1, 1)
-        grid.add(lblEndDate, 1, 2, 1, 1)
-        grid.add(tfStartDate, 0, 3, 1, 1)
-        grid.add(tfEndDate, 1, 3, 1, 1)
-        grid.add(tbCalendar, 0, 4, 2, 1)
+        grid.add(tbCalendar, 0, 2, 2, 1)
+        grid.add(lblStartDate, 0, 3, 1, 1)
+        grid.add(lblEndDate, 1, 3, 1, 1)
+        grid.add(tfStartDate, 0, 4, 1, 1)
+        grid.add(tfEndDate, 1, 4, 1, 1)
         grid.add(lblInterval, 0, 5, 2, 1)
         grid.add(tfInterval, 0, 6, 2, 1)
         grid.add(lblCoordinate, 0, 8, 2, 1)
@@ -330,7 +363,24 @@ class ViewMain(private val controller: ControllerMain) {
         grid.add(lblCelPoints, 0, 15, 1, 1)
         grid.add(btnCPInput, 1, 15, 1, 1)
         grid.add(lblSelectedCelPoints, 0, 16, 2, 1)
+        grid.add(ButtonBarBuilder().setButtons(btnCalc, btnHelp, btnExit).build(), 0, 17, 2, 1)
         return grid
+    }
+
+    private fun onCalc() {
+        var index = comboAyanamsha.selectionModel.selectedIndex
+        ModelMain.selectedAyanamsha = ModelMain.allAyanamshas[index]
+        index = comboCoordinates.selectionModel.selectedIndex
+        ModelMain.selectedCoordinateType = ModelMain.allCoordinates[index]
+        index = comboCycleType.selectionModel.selectedIndex
+        ModelMain.selectedCycleType = ModelMain.allCycleTypes[index]
+        ModelMain.selectedStartDate = tfStartDate.text
+        ModelMain.selectedEndDate = tfEndDate.text
+        ModelMain.gregorian = !tbCalendar.isSelected
+        ModelMain.interval = tfInterval.text.toDouble()
+
+        controller.handleMessage(MainMessages.CALCULATE_CLICKED)
+
     }
 
     fun asParent(): Parent? {
