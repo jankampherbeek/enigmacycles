@@ -13,9 +13,13 @@ import com.jfoenix.controls.JFXToggleButton
 import com.radixpro.enigma.cycles.core.*
 import com.radixpro.enigma.cycles.helpers.CycleResultConverter
 import com.radixpro.enigma.cycles.process.CycleRequestCalculator
+import com.radixpro.enigma.cycles.ui.UiDictionary.INPUT_DEFAULT_STYLE
+import com.radixpro.enigma.cycles.ui.UiDictionary.INPUT_ERROR_STYLE
+import com.radixpro.enigma.libfe.core.UiCelPoints
 import com.radixpro.enigma.libfe.fragments.Titles
 import com.radixpro.enigma.libfe.fxbuilders.*
 import com.radixpro.enigma.libfe.texts.Rosetta.getText
+import com.radixpro.enigma.libfe.validation.Validator
 import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -34,7 +38,10 @@ import java.util.*
 enum class MainMessages {
     CELPOINTS_SELECTED,
     CALCULATE_CLICKED,
-    EXIT_CLICKED
+    EXIT_CLICKED,
+    VALIDATE_ENDDATE,
+    VALIDATE_INTERVAL,
+    VALIDATE_STARTDATE
 }
 
 /**
@@ -59,8 +66,13 @@ object ModelMain {
     var selectedCycleType = CycleType.SINGLE_POINT
     var selectedStartDate = ""
     var selectedEndDate = ""
+    var selectedInterval = ""
+    var selectedCalendarGregorian = true
     var gregorian = true
     var interval = 1.0
+    var startDateOk = false
+    var endDateOk = false
+    var intervalOk = false
 
     var selectedCelPointsText = ""
 
@@ -70,7 +82,8 @@ object ModelMain {
  * Controller for ViewMain
  */
 class ControllerMain(private val calculator: CycleRequestCalculator,
-                     private val converter: CycleResultConverter
+                     private val converter: CycleResultConverter,
+                     private val validator: Validator
 ) {
 
     init { setUp()}
@@ -139,8 +152,23 @@ class ControllerMain(private val calculator: CycleRequestCalculator,
         when (msg) {
             MainMessages.CALCULATE_CLICKED -> onCalculate()
             MainMessages.CELPOINTS_SELECTED -> checkSelectedCelPoints()
+            MainMessages.VALIDATE_ENDDATE -> validateEndDate()
+            MainMessages.VALIDATE_INTERVAL -> validateInterval()
+            MainMessages.VALIDATE_STARTDATE -> validateStartDate()
         }
 
+    }
+
+    private fun validateStartDate() {
+        ModelMain.startDateOk = validator.isValidDate(ModelMain.selectedStartDate, ModelMain.selectedCalendarGregorian)
+    }
+
+    private fun validateEndDate() {
+        ModelMain.endDateOk = validator.isValidDate(ModelMain.selectedEndDate, ModelMain.selectedCalendarGregorian)
+    }
+
+    private fun validateInterval() {
+        ModelMain.intervalOk = validator.isValidDouble(ModelMain.selectedInterval)
     }
 
     private fun checkSelectedCelPoints() {
@@ -308,9 +336,10 @@ class ViewMain(private val controller: ControllerMain) {
         ).build()
         btnCPInput.onAction = EventHandler{ onCPInput()}
         btnCalc = ButtonBuilder().setText(getText("input.btncalc")).build()
+        btnCalc.isDisable = true
         btnCalc.onAction = EventHandler{ onCalc() }
         btnHelp = ButtonBuilder().setText(getText("shr.btnhelp")).build()
-        btnExit = ButtonBuilder().setText(getText("lshr.btnexit")).build()
+        btnExit = ButtonBuilder().setText(getText("shr.btnexit")).build()
     }
 
     private fun defineToggleButtons() {
@@ -318,6 +347,7 @@ class ViewMain(private val controller: ControllerMain) {
         tbCalendar.text = getText("input.tbcalendar")
         tbCalendar.toggleColor = Color.STEELBLUE
         tbCalendar.toggleLineColor = Color.LIGHTSTEELBLUE
+        tbCalendar.onAction = EventHandler{ handleCalendar()}
 
     }
 
@@ -331,9 +361,13 @@ class ViewMain(private val controller: ControllerMain) {
     }
 
     private fun defineTextFields() {
-        tfStartDate = TextFieldBuilder().setPrefWidth(halfWidth).setPromptText(getText("lshr.promptdate")).build()
-        tfEndDate = TextFieldBuilder().setPrefWidth(halfWidth).setPromptText(getText("lshr.promptdate")).build()
+        tfStartDate = TextFieldBuilder().setPrefWidth(halfWidth).setPromptText(getText("shr.promptdate")).build()
+        tfEndDate = TextFieldBuilder().setPrefWidth(halfWidth).setPromptText(getText("shr.promptdate")).build()
         tfInterval = TextFieldBuilder().setPrefWidth(50.0).setMaxWidth(100.0).build()
+
+        tfStartDate.onKeyTyped = EventHandler{ checkStartDate()}
+        tfEndDate.onKeyTyped = EventHandler{ checkEndDate()}
+        tfInterval.onKeyTyped = EventHandler { checkInterval() }
     }
 
 
@@ -382,6 +416,41 @@ class ViewMain(private val controller: ControllerMain) {
         controller.handleMessage(MainMessages.CALCULATE_CLICKED)
 
     }
+
+    private fun handleCalendar() {
+        ModelMain.gregorian = !tbCalendar.isSelected
+    }
+
+    private fun checkStartDate() {
+        ModelMain.selectedStartDate = tfStartDate.text
+        controller.handleMessage(MainMessages.VALIDATE_STARTDATE)
+        tfStartDate.style = if (ModelMain.startDateOk) INPUT_DEFAULT_STYLE else INPUT_ERROR_STYLE
+        checkStatus()
+    }
+
+    private fun checkEndDate() {
+        ModelMain.selectedEndDate = tfEndDate.text
+        controller.handleMessage(MainMessages.VALIDATE_ENDDATE)
+        tfEndDate.style = if (ModelMain.endDateOk) INPUT_DEFAULT_STYLE else INPUT_ERROR_STYLE
+        checkStatus()
+    }
+
+    private fun checkInterval() {
+       ModelMain.selectedInterval = tfInterval.text
+       controller.handleMessage(MainMessages.VALIDATE_INTERVAL)
+       tfInterval.style = if (ModelMain.intervalOk) INPUT_DEFAULT_STYLE else INPUT_ERROR_STYLE
+       checkStatus()
+    }
+
+    private fun checkStatus() {
+        btnCalc.isDisable = !(ModelMain.startDateOk
+                && ModelMain.endDateOk
+                && ModelMain.intervalOk
+                && ModelMain.selectedCelPoints.size > 0)
+
+        // todo add check for celPoints
+    }
+
 
     fun asParent(): Parent? {
         return gridPane

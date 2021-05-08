@@ -7,11 +7,11 @@
 package com.radixpro.enigma.cycles.ui
 
 import com.jfoenix.controls.JFXCheckBox
-import com.radixpro.enigma.cycles.core.CelPointCat
 import com.radixpro.enigma.cycles.core.CpSelectModus
-import com.radixpro.enigma.cycles.core.UiCelPoints
 import com.radixpro.enigma.cycles.ui.UiDictionary.GAP
 import com.radixpro.enigma.libbe.domain.ObserverPos
+import com.radixpro.enigma.libfe.core.CelPointCat
+import com.radixpro.enigma.libfe.core.UiCelPoints
 import com.radixpro.enigma.libfe.fragments.Titles
 import com.radixpro.enigma.libfe.fxbuilders.*
 import com.radixpro.enigma.libfe.texts.Rosetta.getText
@@ -21,7 +21,6 @@ import javafx.scene.Scene
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
-import javafx.stage.Modality
 import javafx.stage.Stage
 
 
@@ -77,7 +76,7 @@ class ControllerCPSelection {
     }
 
     private fun setUp() {
-        ModelCPSelection.txtTitle = getText("lshr.cpselection.title")
+        ModelCPSelection.txtTitle = getText("shr.cpselection.title")
         useGeocentric = selectModus.observerPos == ObserverPos.GEOCENTRIC || selectModus.observerPos == ObserverPos.TOPOCENTRIC
         defineCelestialPoints()
     }

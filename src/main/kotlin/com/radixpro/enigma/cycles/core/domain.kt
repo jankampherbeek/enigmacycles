@@ -7,6 +7,8 @@
 package com.radixpro.enigma.cycles.core
 
 import com.radixpro.enigma.libbe.domain.ObserverPos
+import com.radixpro.enigma.libfe.core.CelPointCat
+import com.radixpro.enigma.libfe.core.UiCelPoints
 
 data class SummableCelPoint(val celPoint: UiCelPoints, val positive: Boolean)
 

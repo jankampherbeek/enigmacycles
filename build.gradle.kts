@@ -19,8 +19,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.radixpro.enigma:libbe:0.3.3")
-    implementation("com.radixpro.enigma:libfe:0.2")
+    implementation("com.radixpro.enigma:libbe:0.3.4")
+    implementation("com.radixpro.enigma:libfe:0.3")
     implementation("de.th-mack:seport:2.01.00-02")
     implementation("org.openjfx:javafx-swing:11.0.2")
     implementation("org.openjfx:javafx-controls:14.0.1")

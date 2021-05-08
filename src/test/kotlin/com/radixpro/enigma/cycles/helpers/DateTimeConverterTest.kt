@@ -9,7 +9,7 @@ package com.radixpro.enigma.cycles.helpers
 import com.radixpro.enigma.cycles.exceptions.DateException
 import io.kotest.matchers.ints.shouldBeExactly
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 internal class DateTimeConverterTest {
 

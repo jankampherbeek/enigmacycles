@@ -12,15 +12,16 @@ import com.radixpro.enigma.cycles.ui.UiDictionary.DATE_SEPARATOR
 import com.radixpro.enigma.libbe.api.AstronApi
 import com.radixpro.enigma.libbe.api.DateTimeTxtRequest
 import com.radixpro.enigma.libbe.domain.TimeSeriesValues
+import com.radixpro.enigma.libfe.core.UiCelPoints
 
 class DateTimeConverter {
 
     fun dateElements(dateTxt: String): List<Int> {
         val errorTxt = "Error in date, parameters used: $dateTxt"
         val values = dateTxt.split(DATE_SEPARATOR)
-        var day: Int
-        var month: Int
-        var year: Int
+        val day: Int
+        val month: Int
+        val year: Int
         if (values.size == 3) {
             try {
                 year = values[0].toInt()
@@ -44,14 +45,6 @@ class CycleResultConverter(private val astronApi: AstronApi) {
         val presValues = createSinglePresValues(values)
         return PresentableSingleCycleResult(definition, jdNrs, dateTxts, presValues)
     }
-
-//    fun responseSummedToPresResult(definition: CycleDefinition,
-//                                   values: List<TimeSeriesValues>): PresentableSummedCycleResult {
-//        val jdNrs = createJdNrs(values[0])
-//        val dateTxts = createDateTxts(jdNrs, definition.cyclePeriod.gregorian)
-//        val presSummedValues = createSummedPresValues(definition, values)
-//        return PresentableSummedCycleResult(definition, jdNrs, dateTxts, presSummedValues[0], presSummedValues[1])
-//    }
 
     private fun createJdNrs(tsValues: TimeSeriesValues): List<Double> {
         val jdNrs = mutableListOf<Double>()
@@ -82,33 +75,5 @@ class CycleResultConverter(private val astronApi: AstronApi) {
         }
         return presentableTSValues
     }
-
-//    private fun createSummedPresValues(definition: CycleDefinition,
-//                                       allTsValues: List<TimeSeriesValues>): List<List<PresentableTSValues>> {
-//        val presentableAddValues = mutableListOf<PresentableTSValues>()
-//        val prentableSubtractValues = mutableListOf<PresentableTSValues>()
-//        val nrOfPoints = allTsValues.size
-//        var summCPIds = mutableListOf<Int>()
-//        for (i in 0 until definition.summableCelPoint.size) {
-//            summCPIds.add(definition.summableCelPoint[i].celPoint.seId)
-//        }
-//        for (i in 0 until nrOfPoints) {
-//            val positionsForPoint = mutableListOf<Double>()
-//            val listForPoint = allTsValues[i]
-//            for (value in listForPoint.timePositions) positionsForPoint.add(value.second)
-//            val uiCelPoint = UiCelPoints.valueOf(listForPoint.celPoint.name)
-//            if (uiCelPoint.seId in summCPIds) {
-//                for (summableCP in definition.summableCelPoint) {
-//                    if (summableCP.celPoint.seId == uiCelPoint.seId) {
-//                        if (summableCP.positive)
-//                            presentableAddValues.add(PresentableTSValues(uiCelPoint, positionsForPoint))
-//                        else
-//                            prentableSubtractValues.add(PresentableTSValues(uiCelPoint, positionsForPoint))
-//                    }
-//                }
-//            }
-//        }
-//        return listOf(presentableAddValues, prentableSubtractValues)
-//    }
 
 }

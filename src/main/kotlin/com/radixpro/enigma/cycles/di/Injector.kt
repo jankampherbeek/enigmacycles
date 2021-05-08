@@ -15,11 +15,12 @@ import com.radixpro.enigma.cycles.process.CycleRequestCalculator
 import com.radixpro.enigma.cycles.process.CycleRequestProcessor
 import com.radixpro.enigma.cycles.ui.*
 import com.radixpro.enigma.libbe.api.AstronApi
+import com.radixpro.enigma.libfe.validation.Validator
 
 object Injector {
 
     fun injectControllerMain(): ControllerMain {
-        return ControllerMain(injectCycleRequestCalculator(), injectCycleResultConverter())
+        return ControllerMain(injectCycleRequestCalculator(), injectCycleResultConverter(), injectValidator())
     }
 
     fun injectCycleRequestCalculator(): CycleRequestCalculator {
@@ -64,6 +65,10 @@ object Injector {
 
     fun injectScreenSplash(): ScreenSplash {
         return ScreenSplash(injectCycles())
+    }
+
+    fun injectValidator(): Validator {
+        return Validator()
     }
 
     fun injectViewMain(): ViewMain {
