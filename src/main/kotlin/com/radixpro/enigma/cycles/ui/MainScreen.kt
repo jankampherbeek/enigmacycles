@@ -288,6 +288,7 @@ class ViewMain(private val controller: ControllerMain) {
         viewCPSelection.show()
         controller.handleMessage(MainMessages.CELPOINTS_SELECTED)
         lblSelectedCelPoints.text = ModelMain.selectedCelPointsText
+        checkStatus()
     }
 
     private fun defineMenu() {
