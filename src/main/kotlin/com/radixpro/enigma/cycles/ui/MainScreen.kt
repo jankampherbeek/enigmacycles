@@ -12,6 +12,7 @@ import com.jfoenix.controls.JFXTextField
 import com.jfoenix.controls.JFXToggleButton
 import com.radixpro.enigma.cycles.core.*
 import com.radixpro.enigma.cycles.helpers.CycleResultConverter
+import com.radixpro.enigma.cycles.helpers.DateTimeUtils
 import com.radixpro.enigma.cycles.process.CycleRequestCalculator
 import com.radixpro.enigma.cycles.ui.UiDictionary.INPUT_DEFAULT_STYLE
 import com.radixpro.enigma.cycles.ui.UiDictionary.INPUT_ERROR_STYLE
@@ -61,6 +62,7 @@ object ModelMain {
     val allCelPointNames = mutableListOf<String>()
 
     val selectedCelPoints = mutableListOf<UiCelPoints>()
+    val refusedCelPoints = mutableListOf<UiCelPoints>()
     var selectedAyanamsha = UiAyanamsha.NONE
     var selectedCoordinateType = CycleCoordinateTypes.GEO_LONGITUDE
     var selectedCycleType = CycleType.SINGLE_POINT
@@ -73,6 +75,9 @@ object ModelMain {
     var startDateOk = false
     var endDateOk = false
     var intervalOk = false
+    var jdStart = 2000000.0
+    var jdEnd = 2000000.0
+
 
     var selectedCelPointsText = ""
 
@@ -83,7 +88,8 @@ object ModelMain {
  */
 class ControllerMain(private val calculator: CycleRequestCalculator,
                      private val converter: CycleResultConverter,
-                     private val validator: Validator
+                     private val validator: Validator,
+                     private val dateTimeUtils: DateTimeUtils
 ) {
 
     init { setUp()}
@@ -161,10 +167,16 @@ class ControllerMain(private val calculator: CycleRequestCalculator,
 
     private fun validateStartDate() {
         ModelMain.startDateOk = validator.isValidDate(ModelMain.selectedStartDate, ModelMain.selectedCalendarGregorian)
+        if (ModelMain.startDateOk)
+            ModelMain.jdStart = dateTimeUtils.defineJdUt(ModelMain.selectedStartDate, ModelMain.selectedCalendarGregorian)
+        checkSelectedCelPoints()
     }
 
     private fun validateEndDate() {
         ModelMain.endDateOk = validator.isValidDate(ModelMain.selectedEndDate, ModelMain.selectedCalendarGregorian)
+        if (ModelMain.endDateOk)
+            ModelMain.jdEnd = dateTimeUtils.defineJdUt(ModelMain.selectedEndDate, ModelMain.selectedCalendarGregorian)
+        checkSelectedCelPoints()
     }
 
     private fun validateInterval() {
@@ -173,11 +185,16 @@ class ControllerMain(private val calculator: CycleRequestCalculator,
 
     private fun checkSelectedCelPoints() {
         ModelMain.selectedCelPoints.clear()
-        ModelMain.selectedCelPoints.addAll(ModelCPSelection.selectedCelPoints)
-        ModelMain.selectedCelPointsText = showSelectedCelPoints()
+        ModelMain.refusedCelPoints.clear()
+        for (celPoint in ModelCPSelection.selectedCelPoints) {
+            if (validator.isValidPeriodForCelPoint(ModelMain.jdStart, ModelMain.jdEnd, celPoint))
+                ModelMain.selectedCelPoints.add(celPoint)
+            else ModelMain.refusedCelPoints.add(celPoint)
+        }
+        ModelMain.selectedCelPointsText = createCelpointsText()
     }
 
-    private fun showSelectedCelPoints(): String {
+    private fun createCelpointsText(): String {  // TODO: twee functies: showSelected en showRefused, for-loop sharen
         var celPointText = ""
         var separator = ""
         val nrOfCPs = ModelMain.selectedCelPoints.size
@@ -190,6 +207,20 @@ class ControllerMain(private val calculator: CycleRequestCalculator,
             }
             celPointText += separator + getText(ModelMain.selectedCelPoints[i].rbKey)
         }
+        val nrOfRefusedCPs = ModelMain.refusedCelPoints.size
+        if (nrOfRefusedCPs > 0) {
+            celPointText += "\n" + getText("input.lblperiodnotsupported") + "\n"
+            for (i in 0 until nrOfRefusedCPs) {
+                separator = when(i) {
+                    nrOfRefusedCPs -> ""
+                    0 -> ""
+                    3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36 -> ",\n"
+                    else -> ", "
+                }
+                celPointText += separator + getText(ModelMain.refusedCelPoints[i].rbKey)
+            }
+        }
+        celPointText += "\n\n"
         return celPointText
     }
 
@@ -226,7 +257,7 @@ class ControllerMain(private val calculator: CycleRequestCalculator,
 class ViewMain(private val controller: ControllerMain) {
 
     private val height = 800.0
-    val width = 460.0
+    private val width = 460.0
     private val halfWidth = width / 2  - 20.0
     private val spaceheight = 18.0
     private lateinit var comboAyanamsha: JFXComboBox<String>
@@ -426,6 +457,7 @@ class ViewMain(private val controller: ControllerMain) {
         ModelMain.selectedStartDate = tfStartDate.text
         controller.handleMessage(MainMessages.VALIDATE_STARTDATE)
         tfStartDate.style = if (ModelMain.startDateOk) INPUT_DEFAULT_STYLE else INPUT_ERROR_STYLE
+        lblSelectedCelPoints.text = ModelMain.selectedCelPointsText
         checkStatus()
     }
 
@@ -433,6 +465,7 @@ class ViewMain(private val controller: ControllerMain) {
         ModelMain.selectedEndDate = tfEndDate.text
         controller.handleMessage(MainMessages.VALIDATE_ENDDATE)
         tfEndDate.style = if (ModelMain.endDateOk) INPUT_DEFAULT_STYLE else INPUT_ERROR_STYLE
+        lblSelectedCelPoints.text = ModelMain.selectedCelPointsText
         checkStatus()
     }
 
@@ -448,8 +481,6 @@ class ViewMain(private val controller: ControllerMain) {
                 && ModelMain.endDateOk
                 && ModelMain.intervalOk
                 && ModelMain.selectedCelPoints.size > 0)
-
-        // todo add check for celPoints
     }
 
 

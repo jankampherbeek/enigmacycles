@@ -7,10 +7,8 @@
 package com.radixpro.enigma.cycles.process
 
 import com.radixpro.enigma.cycles.core.*
-import com.radixpro.enigma.cycles.exceptions.DateException
-import com.radixpro.enigma.cycles.helpers.DateTimeConverter
+import com.radixpro.enigma.cycles.helpers.DateTimeUtils
 import com.radixpro.enigma.libbe.api.AstronApi
-import com.radixpro.enigma.libbe.api.JdUtRequest
 import com.radixpro.enigma.libbe.api.TimeSeriesRequest
 import com.radixpro.enigma.libbe.domain.*
 
@@ -25,18 +23,12 @@ class CycleRequestProcessor(private val calculator: CycleRequestCalculator) {
         }
 
     }
-
-
 }
-
-
-
-
 
 /**
  * Calculates positions as a TimeSeries for several types of cycles.
  */
-class CycleRequestCalculator(private val astronApi: AstronApi, private val dateTimeConverter: DateTimeConverter) {
+class CycleRequestCalculator(private val astronApi: AstronApi, private val dateTimeUtils: DateTimeUtils) {
 
     fun calculateCycleRequest(definition: CycleDefinition): List<TimeSeriesValues> {
         val request = createRequest(definition)
@@ -60,29 +52,13 @@ class CycleRequestCalculator(private val astronApi: AstronApi, private val dateT
         else CoordinateTypes.EQUATORIAL
         val location = Location(0.0, 0.0)
         val interval = definition.cyclePeriod.interval
-        val jdStart = defineJdUt(definition.cyclePeriod.startDateTxt, definition.cyclePeriod.gregorian)
-        val jdEnd = defineJdUt(definition.cyclePeriod.endDateTxt, definition.cyclePeriod.gregorian)
+        val jdStart = dateTimeUtils.defineJdUt(definition.cyclePeriod.startDateTxt, definition.cyclePeriod.gregorian)
+        val jdEnd = dateTimeUtils.defineJdUt(definition.cyclePeriod.endDateTxt, definition.cyclePeriod.gregorian)
         val nrOfDays = jdEnd - jdStart
         val nrOfEvents = nrOfDays / interval
         return TimeSeriesRequest(celPoints, observerPos, coordinateType, jdStart, location, interval, nrOfEvents.toInt())
 
 
     }
-
-    @Throws(DateException::class)
-    private fun defineJdUt(dateTxt: String, gregorian: Boolean): Double {
-        val dmy =dateTimeConverter.dateElements(dateTxt)
-        val dateTimeParts = DateTimeParts(dmy[0], dmy[1], dmy[2], 0,0,0,0.0, gregorian)
-        val jdUtRequest = JdUtRequest(dateTimeParts)
-        val response = astronApi.calcJdUt(jdUtRequest)
-        if (response.errors) {
-            // todo log exception
-            throw DateException("Exception when calculating jd for " + dateTxt + " and gregorian is " + gregorian
-                    + ". Original message : " + response.comments)
-        }
-        return astronApi.calcJdUt(jdUtRequest).result
-    }
-
-
 
 }

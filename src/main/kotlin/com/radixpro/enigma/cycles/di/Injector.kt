@@ -7,10 +7,7 @@
 package com.radixpro.enigma.cycles.di
 
 import com.radixpro.enigma.cycles.Cycles
-import com.radixpro.enigma.cycles.helpers.CycleResultConverter
-import com.radixpro.enigma.cycles.helpers.DateTimeConverter
-import com.radixpro.enigma.cycles.helpers.DateValidator
-import com.radixpro.enigma.cycles.helpers.LanguageManager
+import com.radixpro.enigma.cycles.helpers.*
 import com.radixpro.enigma.cycles.process.CycleRequestCalculator
 import com.radixpro.enigma.cycles.process.CycleRequestProcessor
 import com.radixpro.enigma.cycles.ui.*
@@ -20,11 +17,12 @@ import com.radixpro.enigma.libfe.validation.Validator
 object Injector {
 
     fun injectControllerMain(): ControllerMain {
-        return ControllerMain(injectCycleRequestCalculator(), injectCycleResultConverter(), injectValidator())
+        return ControllerMain(injectCycleRequestCalculator(), injectCycleResultConverter(), injectValidator(),
+            injectDateTimeUtils())
     }
 
     fun injectCycleRequestCalculator(): CycleRequestCalculator {
-        return CycleRequestCalculator(AstronApi(), injectDateTimeConverter())
+        return CycleRequestCalculator(AstronApi(), injectDateTimeUtils())
     }
 
     fun injectCycleRequestProcessor(): CycleRequestProcessor {
@@ -41,6 +39,10 @@ object Injector {
 
     private fun injectDateTimeConverter(): DateTimeConverter {
         return DateTimeConverter()
+    }
+
+    private fun injectDateTimeUtils(): DateTimeUtils {
+        return DateTimeUtils(AstronApi(), injectDateTimeConverter())
     }
 
     fun injectDateValidator(): DateValidator {

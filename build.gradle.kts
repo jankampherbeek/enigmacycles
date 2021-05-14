@@ -7,7 +7,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.0.9"
     java
     `maven-publish`
-    `application`
+    application
 }
 
 repositories {
@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     implementation("com.radixpro.enigma:libbe:0.3.4")
-    implementation("com.radixpro.enigma:libfe:0.3")
+    implementation("com.radixpro.enigma:libfe:0.4")
     implementation("de.th-mack:seport:2.01.00-02")
     implementation("org.openjfx:javafx-swing:11.0.2")
     implementation("org.openjfx:javafx-controls:14.0.1")
@@ -34,8 +34,6 @@ dependencies {
     implementation("org.jetbrains:annotations:RELEASE")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.32")
-//    implementation("io.github.palexdev:materialfx:11.10.1")
-//    compile("org.jfxtras:jmetro:11.6.14")
     compile("com.jfoenix:jfoenix:9.0.10")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0")
     testImplementation("junit:junit:4.12")
